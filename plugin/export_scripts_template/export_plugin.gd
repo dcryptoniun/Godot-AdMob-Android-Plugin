@@ -34,9 +34,11 @@ class AndroidExportPlugin extends EditorExportPlugin:
 	func _get_android_dependencies(platform, debug):
 		# TODO: Add remote dependices here.
 		if debug:
-			return PackedStringArray([])
+			return PackedStringArray(["com.google.android.ump:user-messaging-platform:3.1.0",
+			"com.google.android.gms:play-services-ads:24.1.0"])
 		else:
-			return PackedStringArray([])
+			return PackedStringArray(["com.google.android.ump:user-messaging-platform:3.1.0",
+			"com.google.android.gms:play-services-ads:24.1.0"])
 
 	func _get_name():
 		return _plugin_name

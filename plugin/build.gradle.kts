@@ -40,9 +40,9 @@ android {
 dependencies {
     implementation("org.godotengine:godot:4.4.0.stable")
     // Google Mobile Ads SDK
-    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    implementation("com.google.android.gms:play-services-ads:24.1.0")
     // User Messaging Platform (for consent collection)
-    implementation("com.google.android.ump:user-messaging-platform:2.1.0")
+    implementation("com.google.android.ump:user-messaging-platform:3.1.0")
 }
 
 // BUILD TASKS DEFINITION
