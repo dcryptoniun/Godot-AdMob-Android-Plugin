@@ -19,9 +19,18 @@ config/icon="res://icon.svg"
 
 settings/stdout/verbose_stdout=true
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/GodotAdMobAndroidPlugin/plugin.cfg")
+
+[gui]
+
+theme/custom="uid://cwj43bqo2gh6n"
 
 [rendering]
 

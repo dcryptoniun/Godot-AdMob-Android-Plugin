@@ -5,17 +5,23 @@
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
 
-[node name="UI" type="Control" parent="."]
-layout_mode = 3
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1152.0
-offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
 
-[node name="Title" type="Label" parent="UI"]
+[node name="UI" type="Control" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/MarginContainer/UI"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -26,7 +32,8 @@ theme_override_font_sizes/font_size = 24
 text = "Godot AdMob Plugin Demo"
 horizontal_alignment = 1
 
-[node name="ConsentStatus" type="Label" parent="UI"]
+[node name="ConsentStatus" type="Label" parent="CanvasLayer/MarginContainer/UI"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -36,7 +43,8 @@ grow_horizontal = 2
 text = "Consent Status: Unknown"
 horizontal_alignment = 1
 
-[node name="AdStatus" type="Label" parent="UI"]
+[node name="AdStatus" type="Label" parent="CanvasLayer/MarginContainer/UI"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -46,7 +54,7 @@ grow_horizontal = 2
 text = "Ad Status: Not initialized"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI"]
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/MarginContainer/UI"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,102 +64,109 @@ offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
 
-[node name="InitializationSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="InitializationSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Initialization"
 
-[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 
-[node name="AppIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="AppIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 text = "App ID:"
 
-[node name="AppIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="AppIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "ca-app-pub-3940256099942544~3347511713"
 placeholder_text = "Enter App ID"
 
-[node name="BannerAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="BannerAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 text = "Banner Ad Unit ID:"
 
-[node name="BannerAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="BannerAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "ca-app-pub-3940256099942544/6300978111"
 placeholder_text = "Enter Banner Ad Unit ID"
 
-[node name="InterstitialAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="InterstitialAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 text = "Interstitial Ad Unit ID:"
 
-[node name="InterstitialAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="InterstitialAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "ca-app-pub-3940256099942544/1033173712"
 placeholder_text = "Enter Interstitial Ad Unit ID"
 
-[node name="RewardedAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="RewardedAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 text = "Rewarded Ad Unit ID:"
 
-[node name="RewardedAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="RewardedAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "ca-app-pub-3940256099942544/5224354917"
 placeholder_text = "Enter Rewarded Ad Unit ID"
 
-[node name="TestDeviceCheckbox" type="CheckBox" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="TestDeviceCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Test Device"
 
-[node name="RealAdsCheckbox" type="CheckBox" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="RealAdsCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Use Real Ads"
 
-[node name="InitializeButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+[node name="InitializeButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
 text = "Initialize AdMob"
 
-[node name="ConsentSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="ConsentSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Consent Management"
 
-[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection"]
 layout_mode = 2
 
-[node name="ShowConsentFormButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+[node name="ShowConsentFormButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection"]
 layout_mode = 2
 text = "Show Consent Form"
 
-[node name="BannerSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="BannerSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Banner Ads"
 
-[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 
-[node name="BannerPositionLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="BannerPositionLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Banner Position:"
 
-[node name="BannerPositionOption" type="OptionButton" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="BannerPositionOption" type="OptionButton" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
+unique_name_in_owner = true
 layout_mode = 2
 selected = 0
 item_count = 2
@@ -160,11 +175,12 @@ popup/item_0/id = 0
 popup/item_1/text = "Top"
 popup/item_1/id = 1
 
-[node name="BannerSizeLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="BannerSizeLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Banner Size:"
 
-[node name="BannerSizeOption" type="OptionButton" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="BannerSizeOption" type="OptionButton" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
+unique_name_in_owner = true
 layout_mode = 2
 selected = 0
 item_count = 5
@@ -179,67 +195,67 @@ popup/item_3/id = 3
 popup/item_4/text = "LEADERBOARD"
 popup/item_4/id = 4
 
-[node name="LoadBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="LoadBannerButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Load Banner Ad"
 
-[node name="ShowBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="ShowBannerButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Show Banner Ad"
 
-[node name="HideBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="HideBannerButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Hide Banner Ad"
 
-[node name="RemoveBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+[node name="RemoveBannerButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
 text = "Remove Banner Ad"
 
-[node name="InterstitialSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="InterstitialSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Interstitial Ads"
 
-[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection"]
 layout_mode = 2
 
-[node name="LoadInterstitialButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+[node name="LoadInterstitialButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection"]
 layout_mode = 2
 text = "Load Interstitial Ad"
 
-[node name="ShowInterstitialButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+[node name="ShowInterstitialButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection"]
 layout_mode = 2
 text = "Show Interstitial Ad"
 
-[node name="RewardedSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+[node name="RewardedSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Rewarded Ads"
 
-[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 
-[node name="LoadRewardedButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+[node name="LoadRewardedButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 text = "Load Rewarded Ad"
 
-[node name="ShowRewardedButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+[node name="ShowRewardedButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 text = "Show Rewarded Ad"
 
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/RemoveBannerButton" to="." method="_on_remove_banner_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InterstitialSection/LoadInterstitialButton" to="." method="_on_load_interstitial_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InterstitialSection/ShowInterstitialButton" to="." method="_on_show_interstitial_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/RewardedSection/LoadRewardedButton" to="." method="_on_load_rewarded_button_pressed"]
-[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/RewardedSection/ShowRewardedButton" to="." method="_on_show_rewarded_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/RemoveBannerButton" to="." method="_on_remove_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection/LoadInterstitialButton" to="." method="_on_load_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection/ShowInterstitialButton" to="." method="_on_show_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection/LoadRewardedButton" to="." method="_on_load_rewarded_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection/ShowRewardedButton" to="." method="_on_show_rewarded_button_pressed"]

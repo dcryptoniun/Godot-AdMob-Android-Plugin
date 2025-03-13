@@ -66,26 +66,33 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
 
     // Initialize the plugin with configuration
     @UsedByGodot
-    fun initialize(config: Dictionary) {
+    fun initialize(
+        appId: String = "",
+        bannerAdUnitId: String = "",
+        interstitialAdUnitId: String = "",
+        rewardedAdUnitId: String = "",
+        isTestDevice: Boolean = false,
+        isReal: Boolean = false
+    ) {
         runOnUiThread {
             try {
-                // Extract configuration values
-                appId = config.get("app_id") as? String ?: ""
-                bannerAdUnitId = config.get("banner_ad_unit_id") as? String ?: ""
-                interstitialAdUnitId = config.get("interstitial_ad_unit_id") as? String ?: ""
-                rewardedAdUnitId = config.get("rewarded_ad_unit_id") as? String ?: ""
-                isTestDevice = config.get("is_test_device") as? Boolean ?: false
-                isUsingRealAds = config.get("is_real") as? Boolean ?: false
+                // Set configuration values
+                this.appId = appId
+                this.bannerAdUnitId = bannerAdUnitId
+                this.interstitialAdUnitId = interstitialAdUnitId
+                this.rewardedAdUnitId = rewardedAdUnitId
+                this.isTestDevice = isTestDevice
+                this.isUsingRealAds = isReal
                 
                 // Set up Mobile Ads SDK
                 MobileAds.initialize(activity!!) {}
                 
                 // Use test ad IDs if not using real ads
                 if (!isUsingRealAds) {
-                    appId = TEST_APP_ID
-                    bannerAdUnitId = TEST_BANNER_AD_UNIT_ID
-                    interstitialAdUnitId = TEST_INTERSTITIAL_AD_UNIT_ID
-                    rewardedAdUnitId = TEST_REWARDED_AD_UNIT_ID
+                    this.appId = TEST_APP_ID
+                    this.bannerAdUnitId = TEST_BANNER_AD_UNIT_ID
+                    this.interstitialAdUnitId = TEST_INTERSTITIAL_AD_UNIT_ID
+                    this.rewardedAdUnitId = TEST_REWARDED_AD_UNIT_ID
                 }
                 
                 // Request consent information if needed
@@ -96,6 +103,19 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 Log.e(TAG, "Error initializing AdMob: ${e.message}")
             }
         }
+    }
+    
+    // For backward compatibility with Godot < 4.4
+    @UsedByGodot
+    fun initializeWithDictionary(config: Dictionary) {
+        val appId = config.get("app_id") as? String ?: ""
+        val bannerAdUnitId = config.get("banner_ad_unit_id") as? String ?: ""
+        val interstitialAdUnitId = config.get("interstitial_ad_unit_id") as? String ?: ""
+        val rewardedAdUnitId = config.get("rewarded_ad_unit_id") as? String ?: ""
+        val isTestDevice = config.get("is_test_device") as? Boolean ?: false
+        val isReal = config.get("is_real") as? Boolean ?: false
+        
+        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal)
     }
     
     // Consent Management for EU users
