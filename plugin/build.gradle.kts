@@ -39,7 +39,10 @@ android {
 
 dependencies {
     implementation("org.godotengine:godot:4.4.0.stable")
-    // TODO: Additional dependencies should be added to export_plugin.gd as well.
+    // Google Mobile Ads SDK
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    // User Messaging Platform (for consent collection)
+    implementation("com.google.android.ump:user-messaging-platform:2.1.0")
 }
 
 // BUILD TASKS DEFINITION

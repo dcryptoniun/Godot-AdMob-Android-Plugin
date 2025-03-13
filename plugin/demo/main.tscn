@@ -1,19 +1,245 @@
 [gd_scene load_steps=2 format=3 uid="uid://cg3hylang5fxn"]
 
-[ext_resource type="Script" path="res://main.gd" id="1_j0gfq"]
+[ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
 
-[node name="Button" type="Button" parent="."]
-anchors_preset = 14
-anchor_top = 0.5
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = 40.0
-offset_top = 250.0
-offset_right = 320.0
-offset_bottom = 312.0
-text = "Hello World"
+anchor_bottom = 1.0
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[node name="Title" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 20.0
+offset_bottom = 46.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Godot AdMob Plugin Demo"
+horizontal_alignment = 1
+
+[node name="ConsentStatus" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 60.0
+offset_bottom = 86.0
+grow_horizontal = 2
+text = "Consent Status: Unknown"
+horizontal_alignment = 1
+
+[node name="AdStatus" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 90.0
+offset_bottom = 116.0
+grow_horizontal = 2
+text = "Ad Status: Not initialized"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 130.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="InitializationSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Initialization"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+
+[node name="AppIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "App ID:"
+
+[node name="AppIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "ca-app-pub-3940256099942544~3347511713"
+placeholder_text = "Enter App ID"
+
+[node name="BannerAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "Banner Ad Unit ID:"
+
+[node name="BannerAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "ca-app-pub-3940256099942544/6300978111"
+placeholder_text = "Enter Banner Ad Unit ID"
+
+[node name="InterstitialAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "Interstitial Ad Unit ID:"
+
+[node name="InterstitialAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "ca-app-pub-3940256099942544/1033173712"
+placeholder_text = "Enter Interstitial Ad Unit ID"
+
+[node name="RewardedAdUnitIdLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "Rewarded Ad Unit ID:"
+
+[node name="RewardedAdUnitIdInput" type="LineEdit" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "ca-app-pub-3940256099942544/5224354917"
+placeholder_text = "Enter Rewarded Ad Unit ID"
+
+[node name="TestDeviceCheckbox" type="CheckBox" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+button_pressed = true
+text = "Test Device"
+
+[node name="RealAdsCheckbox" type="CheckBox" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "Use Real Ads"
+
+[node name="InitializeButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InitializationSection"]
+layout_mode = 2
+text = "Initialize AdMob"
+
+[node name="ConsentSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Consent Management"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+layout_mode = 2
+
+[node name="ShowConsentFormButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/ConsentSection"]
+layout_mode = 2
+text = "Show Consent Form"
+
+[node name="BannerSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Banner Ads"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+
+[node name="BannerPositionLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Banner Position:"
+
+[node name="BannerPositionOption" type="OptionButton" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Bottom"
+popup/item_0/id = 0
+popup/item_1/text = "Top"
+popup/item_1/id = 1
+
+[node name="BannerSizeLabel" type="Label" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Banner Size:"
+
+[node name="BannerSizeOption" type="OptionButton" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "BANNER"
+popup/item_0/id = 0
+popup/item_1/text = "LARGE_BANNER"
+popup/item_1/id = 1
+popup/item_2/text = "MEDIUM_RECTANGLE"
+popup/item_2/id = 2
+popup/item_3/text = "FULL_BANNER"
+popup/item_3/id = 3
+popup/item_4/text = "LEADERBOARD"
+popup/item_4/id = 4
+
+[node name="LoadBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Load Banner Ad"
+
+[node name="ShowBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Show Banner Ad"
+
+[node name="HideBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Hide Banner Ad"
+
+[node name="RemoveBannerButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/BannerSection"]
+layout_mode = 2
+text = "Remove Banner Ad"
+
+[node name="InterstitialSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Interstitial Ads"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+layout_mode = 2
+
+[node name="LoadInterstitialButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+layout_mode = 2
+text = "Load Interstitial Ad"
+
+[node name="ShowInterstitialButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/InterstitialSection"]
+layout_mode = 2
+text = "Show Interstitial Ad"
+
+[node name="RewardedSection" type="VBoxContainer" parent="UI/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionTitle" type="Label" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Rewarded Ads"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+layout_mode = 2
+
+[node name="LoadRewardedButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+layout_mode = 2
+text = "Load Rewarded Ad"
+
+[node name="ShowRewardedButton" type="Button" parent="UI/ScrollContainer/VBoxContainer/RewardedSection"]
+layout_mode = 2
+text = "Show Rewarded Ad"
+
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/BannerSection/RemoveBannerButton" to="." method="_on_remove_banner_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InterstitialSection/LoadInterstitialButton" to="." method="_on_load_interstitial_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/InterstitialSection/ShowInterstitialButton" to="." method="_on_show_interstitial_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/RewardedSection/LoadRewardedButton" to="." method="_on_load_rewarded_button_pressed"]
+[connection signal="pressed" from="UI/ScrollContainer/VBoxContainer/RewardedSection/ShowRewardedButton" to="." method="_on_show_rewarded_button_pressed"]
