@@ -218,14 +218,14 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     
     // Banner Ads
     @UsedByGodot
-    fun loadBannerAd(position: Int = 0, size: String = "BANNER") {
+    fun loadBannerAd(bannerPos: Int = 0, size: String = "BANNER") {
         runOnUiThread {
             try {
                 // Remove existing banner if any
                 removeBannerAd()
                 
                 // Set banner position and size
-                bannerPosition = position
+                bannerPosition = bannerPos
                 bannerAdSize = when (size.uppercase()) {
                     "BANNER" -> AdSize.BANNER
                     "LARGE_BANNER" -> AdSize.LARGE_BANNER

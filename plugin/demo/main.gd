@@ -87,9 +87,9 @@ func _on_show_consent_form_button_pressed():
 func _on_load_banner_button_pressed():
 	if admob:
 		# Get banner position (0: Bottom, 1: Top)
-		var position = admob.BannerPosition.BOTTOM
+		var bannerPos = admob.BannerPosition.BOTTOM
 		if %BannerPositionOption.selected == 1:
-			position = admob.BannerPosition.TOP
+			bannerPos = admob.BannerPosition.TOP
 		
 		# Get banner size
 		var size = admob.BannerSize.BANNER
@@ -103,7 +103,7 @@ func _on_load_banner_button_pressed():
 		elif size_option == 4:
 			size = admob.BannerSize.LEADERBOARD
 		
-		admob.load_banner_ad(position, size)
+		admob.load_banner_ad(bannerPos, size)
 		%AdStatus.text = "Ad Status: Loading banner..."
 
 func _on_show_banner_button_pressed():

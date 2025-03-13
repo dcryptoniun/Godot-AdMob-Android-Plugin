@@ -87,6 +87,38 @@ func _initialize_plugin():
 ## Connect all signals from the plugin
 func _connect_signals():
 	if _plugin:
+		# Disconnect existing signals first to prevent duplicates
+		if _plugin.is_connected("consent_form_dismissed", _on_consent_form_dismissed):
+			_plugin.disconnect("consent_form_dismissed", _on_consent_form_dismissed)
+		if _plugin.is_connected("consent_status_changed", _on_consent_status_changed):
+			_plugin.disconnect("consent_status_changed", _on_consent_status_changed)
+		
+		if _plugin.is_connected("banner_loaded", _on_banner_loaded):
+			_plugin.disconnect("banner_loaded", _on_banner_loaded)
+		if _plugin.is_connected("banner_failed_to_load", _on_banner_failed_to_load):
+			_plugin.disconnect("banner_failed_to_load", _on_banner_failed_to_load)
+		
+		if _plugin.is_connected("interstitial_loaded", _on_interstitial_loaded):
+			_plugin.disconnect("interstitial_loaded", _on_interstitial_loaded)
+		if _plugin.is_connected("interstitial_failed_to_load", _on_interstitial_failed_to_load):
+			_plugin.disconnect("interstitial_failed_to_load", _on_interstitial_failed_to_load)
+		if _plugin.is_connected("interstitial_opened", _on_interstitial_opened):
+			_plugin.disconnect("interstitial_opened", _on_interstitial_opened)
+		if _plugin.is_connected("interstitial_closed", _on_interstitial_closed):
+			_plugin.disconnect("interstitial_closed", _on_interstitial_closed)
+		
+		if _plugin.is_connected("rewarded_ad_loaded", _on_rewarded_ad_loaded):
+			_plugin.disconnect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
+		if _plugin.is_connected("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load):
+			_plugin.disconnect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
+		if _plugin.is_connected("rewarded_ad_opened", _on_rewarded_ad_opened):
+			_plugin.disconnect("rewarded_ad_opened", _on_rewarded_ad_opened)
+		if _plugin.is_connected("rewarded_ad_closed", _on_rewarded_ad_closed):
+			_plugin.disconnect("rewarded_ad_closed", _on_rewarded_ad_closed)
+		if _plugin.is_connected("user_earned_reward", _on_user_earned_reward):
+			_plugin.disconnect("user_earned_reward", _on_user_earned_reward)
+		
+		# Now connect all signals
 		# Consent signals
 		_plugin.connect("consent_form_dismissed", _on_consent_form_dismissed)
 		_plugin.connect("consent_status_changed", _on_consent_status_changed)
@@ -167,9 +199,9 @@ func reset_consent_status():
 # Banner Ads
 
 ## Load a banner ad
-## @param position The position of the banner (0: Bottom, 1: Top)
+## @param bannerPos The position of the banner (0: Bottom, 1: Top)
 ## @param size The size of the banner ("BANNER", "LARGE_BANNER", etc.)
-func load_banner_ad(position = BannerPosition.BOTTOM, size = BannerSize.BANNER):
+func load_banner_ad(bannerPos = BannerPosition.BOTTOM, size = BannerSize.BANNER):
 	if _plugin:
 		var size_str = "BANNER"
 		match size:
@@ -182,7 +214,7 @@ func load_banner_ad(position = BannerPosition.BOTTOM, size = BannerSize.BANNER):
 			BannerSize.LEADERBOARD:
 				size_str = "LEADERBOARD"
 		
-		_plugin.loadBannerAd(position, size_str)
+		_plugin.loadBannerAd(bannerPos, size_str)
 		return true
 	return false
 
