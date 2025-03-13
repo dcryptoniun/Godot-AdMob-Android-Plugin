@@ -1,6 +1,6 @@
 package com.teqanta.mayankmeena.godot.admob
 
-import android.R
+import android.R.id
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ import org.godotengine.godot.plugin.UsedByGodot
 
 class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
 
-    private val TAG = "GodotAdMob"
+    private val tag = "GodotAdMob"
     private var adView: AdView? = null
     private var interstitialAd: InterstitialAd? = null
     private var rewardedAd: RewardedAd? = null
@@ -98,9 +98,9 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 // Request consent information if needed
                 initializeConsentForm()
                 
-                Log.d(TAG, "AdMob plugin initialized with app ID: $appId")
+                Log.d(tag, "AdMob plugin initialized with app ID: $appId")
             } catch (e: Exception) {
-                Log.e(TAG, "Error initializing AdMob: ${e.message}")
+                Log.e(tag, "Error initializing AdMob: ${e.message}")
             }
         }
     }
@@ -108,12 +108,12 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     // For backward compatibility with Godot < 4.4
     @UsedByGodot
     fun initializeWithDictionary(config: Dictionary) {
-        val appId = config.get("app_id") as? String ?: ""
-        val bannerAdUnitId = config.get("banner_ad_unit_id") as? String ?: ""
-        val interstitialAdUnitId = config.get("interstitial_ad_unit_id") as? String ?: ""
-        val rewardedAdUnitId = config.get("rewarded_ad_unit_id") as? String ?: ""
-        val isTestDevice = config.get("is_test_device") as? Boolean ?: false
-        val isReal = config.get("is_real") as? Boolean ?: false
+        val appId = config["app_id"] as? String ?: ""
+        val bannerAdUnitId = config["banner_ad_unit_id"] as? String ?: ""
+        val interstitialAdUnitId = config["interstitial_ad_unit_id"] as? String ?: ""
+        val rewardedAdUnitId = config["rewarded_ad_unit_id"] as? String ?: ""
+        val isTestDevice = config["is_test_device"] as? Boolean ?: false
+        val isReal = config["is_real"] as? Boolean ?: false
         
         initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal)
     }
@@ -125,55 +125,63 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         
         if (isTestDevice) {
             params.setConsentDebugSettings(
-                ConsentDebugSettings.Builder(activity)
-                    .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                    .addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
-                    .build()
+                activity?.let {
+                    ConsentDebugSettings.Builder(it)
+                        .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                        .addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
+                        .build()
+                }
             )
         }
         
-        consentInformation = UserMessagingPlatform.getConsentInformation(activity)
-        consentInformation?.requestConsentInfoUpdate(
-            activity,
-            params.build(),
-            {
-                // Consent info updated successfully
-                if (consentInformation?.isConsentFormAvailable == true) {
-                    loadConsentForm()
+        consentInformation = activity?.let { UserMessagingPlatform.getConsentInformation(it) }
+        activity?.let {
+            consentInformation?.requestConsentInfoUpdate(
+                it,
+                params.build(),
+                {
+                    // Consent info updated successfully
+                    if (consentInformation?.isConsentFormAvailable == true) {
+                        loadConsentForm()
+                    }
+                    emitConsentStatus()
+                },
+                { error ->
+                    // Consent info update failed
+                    Log.e(tag, "Error updating consent info: ${error.message}")
                 }
-                emitConsentStatus()
-            },
-            { error ->
-                // Consent info update failed
-                Log.e(TAG, "Error updating consent info: ${error.message}")
-            }
-        )
+            )
+        }
     }
     
     private fun loadConsentForm() {
-        UserMessagingPlatform.loadConsentForm(
-            activity,
-            { form ->
-                consentForm = form
-                if (consentInformation?.consentStatus == ConsentStatus.REQUIRED) {
-                    showConsentForm()
+        activity?.let {
+            UserMessagingPlatform.loadConsentForm(
+                it,
+                { form ->
+                    consentForm = form
+                    if (consentInformation?.consentStatus == ConsentStatus.REQUIRED) {
+                        showConsentForm()
+                    }
+                },
+                { error ->
+                    Log.e(tag, "Error loading consent form: ${error.message}")
                 }
-            },
-            { error ->
-                Log.e(TAG, "Error loading consent form: ${error.message}")
-            }
-        )
+            )
+        }
     }
     
     private fun showConsentForm() {
-        consentForm?.show(
-            activity
-        ) { error ->
-            if (error != null) {
-                Log.e(TAG, "Error showing consent form: ${error.message}")
+        activity?.let {
+            consentForm?.show(
+                it
+            ) { error ->
+                if (error != null) {
+                    Log.e(tag, "Error showing consent form: ${error.message}")
+                }
+                emitSignal("consent_form_dismissed")
+                emitConsentStatus()
             }
-            emitSignal("consent_form_dismissed")
-            emitConsentStatus()
         }
     }
     
@@ -243,7 +251,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 // Set up ad listeners
                 adView?.adListener = object : AdListener() {
                     override fun onAdLoaded() {
-                        Log.d(TAG, "Banner ad loaded")
+                        Log.d(tag, "Banner ad loaded")
                         emitSignal("banner_loaded")
                         if (bannerVisible) {
                             showBannerAd()
@@ -251,7 +259,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                     }
                     
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        Log.e(TAG, "Banner ad failed to load: ${error.message}")
+                        Log.e(tag, "Banner ad failed to load: ${error.message}")
                         emitSignal("banner_failed_to_load", error.message)
                     }
                 }
@@ -261,7 +269,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 adView?.loadAd(adRequest)
                 
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading banner ad: ${e.message}")
+                Log.e(tag, "Error loading banner ad: ${e.message}")
             }
         }
     }
@@ -271,7 +279,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         runOnUiThread {
             try {
                 if (adView == null) {
-                    Log.w(TAG, "Banner ad not loaded yet")
+                    Log.w(tag, "Banner ad not loaded yet")
                     return@runOnUiThread
                 }
 
@@ -296,11 +304,11 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                         android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL
                 }
 
-                activity?.findViewById<FrameLayout>(R.id.content)?.addView(adView, layoutParams)
+                activity?.findViewById<FrameLayout>(id.content)?.addView(adView, layoutParams)
                 adView?.visibility = View.VISIBLE
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error showing banner ad: ${e.message}")
+                Log.e(tag, "Error showing banner ad: ${e.message}")
             }
         }
     }
@@ -335,37 +343,37 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                     InterstitialAd.load(it, interstitialAdUnitId, adRequest, object : InterstitialAdLoadCallback() {
                         override fun onAdLoaded(ad: InterstitialAd) {
                             interstitialAd = ad
-                            Log.d(TAG, "Interstitial ad loaded")
+                            Log.d(tag, "Interstitial ad loaded")
                             emitSignal("interstitial_loaded")
 
                             interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                                 override fun onAdDismissedFullScreenContent() {
-                                    Log.d(TAG, "Interstitial ad dismissed")
+                                    Log.d(tag, "Interstitial ad dismissed")
                                     interstitialAd = null
                                     emitSignal("interstitial_closed")
                                 }
 
                                 override fun onAdShowedFullScreenContent() {
-                                    Log.d(TAG, "Interstitial ad showed fullscreen content")
+                                    Log.d(tag, "Interstitial ad showed fullscreen content")
                                     emitSignal("interstitial_opened")
                                 }
 
                                 override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                                    Log.e(TAG, "Interstitial ad failed to show: ${error.message}")
+                                    Log.e(tag, "Interstitial ad failed to show: ${error.message}")
                                     interstitialAd = null
                                 }
                             }
                         }
 
                         override fun onAdFailedToLoad(error: LoadAdError) {
-                            Log.e(TAG, "Interstitial ad failed to load: ${error.message}")
+                            Log.e(tag, "Interstitial ad failed to load: ${error.message}")
                             interstitialAd = null
                             emitSignal("interstitial_failed_to_load", error.message)
                         }
                     })
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading interstitial ad: ${e.message}")
+                Log.e(tag, "Error loading interstitial ad: ${e.message}")
             }
         }
     }
@@ -375,13 +383,13 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         runOnUiThread {
             try {
                 if (interstitialAd == null) {
-                    Log.w(TAG, "Interstitial ad not loaded yet")
+                    Log.w(tag, "Interstitial ad not loaded yet")
                     return@runOnUiThread
                 }
                 
                 interstitialAd?.show(activity!!)
             } catch (e: Exception) {
-                Log.e(TAG, "Error showing interstitial ad: ${e.message}")
+                Log.e(tag, "Error showing interstitial ad: ${e.message}")
             }
         }
     }
@@ -402,37 +410,37 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                     RewardedAd.load(it, rewardedAdUnitId, adRequest, object : RewardedAdLoadCallback() {
                         override fun onAdLoaded(ad: RewardedAd) {
                             rewardedAd = ad
-                            Log.d(TAG, "Rewarded ad loaded")
+                            Log.d(tag, "Rewarded ad loaded")
                             emitSignal("rewarded_ad_loaded")
 
                             rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                                 override fun onAdDismissedFullScreenContent() {
-                                    Log.d(TAG, "Rewarded ad dismissed")
+                                    Log.d(tag, "Rewarded ad dismissed")
                                     rewardedAd = null
                                     emitSignal("rewarded_ad_closed")
                                 }
 
                                 override fun onAdShowedFullScreenContent() {
-                                    Log.d(TAG, "Rewarded ad showed fullscreen content")
+                                    Log.d(tag, "Rewarded ad showed fullscreen content")
                                     emitSignal("rewarded_ad_opened")
                                 }
 
                                 override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                                    Log.e(TAG, "Rewarded ad failed to show: ${error.message}")
+                                    Log.e(tag, "Rewarded ad failed to show: ${error.message}")
                                     rewardedAd = null
                                 }
                             }
                         }
 
                         override fun onAdFailedToLoad(error: LoadAdError) {
-                            Log.e(TAG, "Rewarded ad failed to load: ${error.message}")
+                            Log.e(tag, "Rewarded ad failed to load: ${error.message}")
                             rewardedAd = null
                             emitSignal("rewarded_ad_failed_to_load", error.message)
                         }
                     })
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading rewarded ad: ${e.message}")
+                Log.e(tag, "Error loading rewarded ad: ${e.message}")
             }
         }
     }
@@ -442,7 +450,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         runOnUiThread {
             try {
                 if (rewardedAd == null) {
-                    Log.w(TAG, "Rewarded ad not loaded yet")
+                    Log.w(tag, "Rewarded ad not loaded yet")
                     return@runOnUiThread
                 }
                 
@@ -450,11 +458,11 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                     // Handle the reward
                     val rewardAmount = rewardItem.amount
                     val rewardType = rewardItem.type
-                    Log.d(TAG, "User earned reward: $rewardAmount $rewardType")
+                    Log.d(tag, "User earned reward: $rewardAmount $rewardType")
                     emitSignal("user_earned_reward", rewardAmount, rewardType)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error showing rewarded ad: ${e.message}")
+                Log.e(tag, "Error showing rewarded ad: ${e.message}")
             }
         }
     }
