@@ -1,8 +1,7 @@
 extends Node2D
 
-# Plugin reference
-var _plugin_name = "GodotAdMobAndroidPlugin"
-var _android_plugin
+# AdMob reference
+var admob
 
 # Ad configuration
 var app_id = "ca-app-pub-3940256099942544~3347511713" # Test app ID
@@ -17,47 +16,46 @@ func _ready():
 	%ConsentStatus.text = "Consent Status: Unknown"
 	%AdStatus.text = "Ad Status: Not initialized"
 	
-	# Initialize plugin
-	if Engine.has_singleton(_plugin_name):
-		_android_plugin = Engine.get_singleton(_plugin_name)
-		
+	# Initialize AdMob
+	admob = $AdMob
+	if admob:
 		# Connect signals
 		_connect_signals()
 		
 		# Initialize AdMob
 		_initialize_admob()
 	else:
-		printerr("Couldn't find plugin " + _plugin_name)
-		%AdStatus.text = "Ad Status: Plugin not found"
+		printerr("Couldn't find AdMob node")
+		%AdStatus.text = "Ad Status: AdMob node not found"
 
-# Connect all signals from the plugin
+# Connect all signals from the AdMob wrapper
 func _connect_signals():
-	if _android_plugin:
+	if admob:
 		# Consent signals
-		_android_plugin.connect("consent_form_dismissed", _on_consent_form_dismissed)
-		_android_plugin.connect("consent_status_changed", _on_consent_status_changed)
+		admob.connect("consent_form_dismissed", _on_consent_form_dismissed)
+		admob.connect("consent_status_changed", _on_consent_status_changed)
 		
 		# Banner ad signals
-		_android_plugin.connect("banner_loaded", _on_banner_loaded)
-		_android_plugin.connect("banner_failed_to_load", _on_banner_failed_to_load)
+		admob.connect("banner_loaded", _on_banner_loaded)
+		admob.connect("banner_failed_to_load", _on_banner_failed_to_load)
 		
 		# Interstitial ad signals
-		_android_plugin.connect("interstitial_loaded", _on_interstitial_loaded)
-		_android_plugin.connect("interstitial_failed_to_load", _on_interstitial_failed_to_load)
-		_android_plugin.connect("interstitial_opened", _on_interstitial_opened)
-		_android_plugin.connect("interstitial_closed", _on_interstitial_closed)
+		admob.connect("interstitial_loaded", _on_interstitial_loaded)
+		admob.connect("interstitial_failed_to_load", _on_interstitial_failed_to_load)
+		admob.connect("interstitial_opened", _on_interstitial_opened)
+		admob.connect("interstitial_closed", _on_interstitial_closed)
 		
 		# Rewarded ad signals
-		_android_plugin.connect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
-		_android_plugin.connect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
-		_android_plugin.connect("rewarded_ad_opened", _on_rewarded_ad_opened)
-		_android_plugin.connect("rewarded_ad_closed", _on_rewarded_ad_closed)
-		_android_plugin.connect("user_earned_reward", _on_user_earned_reward)
+		admob.connect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
+		admob.connect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
+		admob.connect("rewarded_ad_opened", _on_rewarded_ad_opened)
+		admob.connect("rewarded_ad_closed", _on_rewarded_ad_closed)
+		admob.connect("user_earned_reward", _on_user_earned_reward)
 
 # Initialize AdMob with configuration
 func _initialize_admob():
-	if _android_plugin:
-		_android_plugin.initialize(
+	if admob:
+		admob.initialize(
 			app_id,
 			banner_ad_unit_id,
 			interstitial_ad_unit_id,
@@ -82,67 +80,67 @@ func _on_initialize_button_pressed():
 
 # Consent management
 func _on_show_consent_form_button_pressed():
-	if _android_plugin:
-		_android_plugin.showConsentFormIfAvailable()
+	if admob:
+		admob.show_consent_form()
 
 # Banner ads
 func _on_load_banner_button_pressed():
-	if _android_plugin:
+	if admob:
 		# Get banner position (0: Bottom, 1: Top)
-		var position = 0
+		var position = admob.BannerPosition.BOTTOM
 		if %BannerPositionOption.selected == 1:
-			position = 1
+			position = admob.BannerPosition.TOP
 		
 		# Get banner size
-		var size = "BANNER"
+		var size = admob.BannerSize.BANNER
 		var size_option = %BannerSizeOption.selected
 		if size_option == 1:
-			size = "LARGE_BANNER"
+			size = admob.BannerSize.LARGE_BANNER
 		elif size_option == 2:
-			size = "MEDIUM_RECTANGLE"
+			size = admob.BannerSize.MEDIUM_RECTANGLE
 		elif size_option == 3:
-			size = "FULL_BANNER"
+			size = admob.BannerSize.FULL_BANNER
 		elif size_option == 4:
-			size = "LEADERBOARD"
+			size = admob.BannerSize.LEADERBOARD
 		
-		_android_plugin.loadBannerAd(position, size)
+		admob.load_banner_ad(position, size)
 		%AdStatus.text = "Ad Status: Loading banner..."
 
 func _on_show_banner_button_pressed():
-	if _android_plugin:
-		_android_plugin.showBannerAd()
+	if admob:
+		admob.show_banner_ad()
 
 func _on_hide_banner_button_pressed():
-	if _android_plugin:
-		_android_plugin.hideBannerAd()
+	if admob:
+		admob.hide_banner_ad()
 
 func _on_remove_banner_button_pressed():
-	if _android_plugin:
-		_android_plugin.removeBannerAd()
+	if admob:
+		admob.remove_banner_ad()
 
 # Interstitial ads
 func _on_load_interstitial_button_pressed():
-	if _android_plugin:
-		_android_plugin.loadInterstitialAd()
+	if admob:
+		admob.load_interstitial_ad()
 		%AdStatus.text = "Ad Status: Loading interstitial..."
 
 func _on_show_interstitial_button_pressed():
-	if _android_plugin:
-		if _android_plugin.isInterstitialAdLoaded():
-			_android_plugin.showInterstitialAd()
+	if admob:
+		if admob.is_interstitial_ad_loaded():
+			admob.show_interstitial_ad()
 		else:
 			%AdStatus.text = "Ad Status: Interstitial not loaded yet"
 
 # Rewarded ads
 func _on_load_rewarded_button_pressed():
-	if _android_plugin:
-		_android_plugin.loadRewardedAd()
+	if admob:
+		admob.load_rewarded_ad()
 		%AdStatus.text = "Ad Status: Loading rewarded ad..."
 
 func _on_show_rewarded_button_pressed():
-	if _android_plugin:
-		if _android_plugin.isRewardedAdLoaded():
-			_android_plugin.showRewardedAd()
+	if admob:
+		if admob.is_rewarded_ad_loaded():
+			admob.show_rewarded_ad()
 		else:
 			%AdStatus.text = "Ad Status: Rewarded ad not loaded yet"
 
