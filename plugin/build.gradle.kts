@@ -13,7 +13,7 @@ val pluginPackageName = "com.teqanta.mayankmeena.godot.admob"
 
 android {
     namespace = pluginPackageName
-    compileSdk = 33
+    compileSdk = 35
 
     buildFeatures {
         buildConfig = true
