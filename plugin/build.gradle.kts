@@ -5,11 +5,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-// TODO: Update value to your plugin's name.
-val pluginName = "GodotAndroidPluginTemplate"
 
-// TODO: Update value to match your plugin's package name.
-val pluginPackageName = "org.godotengine.plugin.android.template"
+val pluginName = "GodotAdMobAndroidPlugin"
+
+
+val pluginPackageName = "com.teqanta.mayankmeena.godot.admob"
 
 android {
     namespace = pluginPackageName
@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    implementation("org.godotengine:godot:4.3.0.stable")
+    implementation("org.godotengine:godot:4.4.0.stable")
     // TODO: Additional dependencies should be added to export_plugin.gd as well.
 }
 

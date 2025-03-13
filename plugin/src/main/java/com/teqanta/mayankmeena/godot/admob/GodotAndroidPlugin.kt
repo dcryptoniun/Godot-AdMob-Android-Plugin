@@ -1,5 +1,4 @@
-// TODO: Update to match your plugin's package name.
-package org.godotengine.plugin.android.template
+package com.teqanta.mayankmeena.godot.admob
 
 import android.util.Log
 import android.widget.Toast
@@ -9,7 +8,7 @@ import org.godotengine.godot.plugin.UsedByGodot
 
 class GodotAndroidPlugin(godot: Godot): GodotPlugin(godot) {
 
-    override fun getPluginName() = BuildConfig.GODOT_PLUGIN_NAME
+    override fun getPluginName() = "GodotAndroidAdMob"
 
     /**
      * Example showing how to declare a method that's used by Godot.
