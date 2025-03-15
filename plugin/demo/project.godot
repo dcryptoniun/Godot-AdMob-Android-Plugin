@@ -8,6 +8,12 @@
 
 config_version=5
 
+[admob]
+
+app_id="ca-app-pub-8711132323779247~9298440940"
+banner_ad_unit_id="ca-app-pub-8711132323779247/4013490520"
+is_real_ads=true
+
 [application]
 
 config/name="AdMob by Mayank Demo"

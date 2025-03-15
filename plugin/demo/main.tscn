@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://cg3hylang5fxn"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
-[ext_resource type="Texture2D" uid="uid://h7335yi660ja" path="res://addons/GodotAdMobAndroidPlugin/icon.png" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://io3eckx41uup" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Texture2D" uid="uid://cs1sdsj77ry5h" path="res://icon.png" id="3_h2yge"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
@@ -26,37 +26,39 @@ theme_override_constants/margin_bottom = 50
 [node name="UI" type="Control" parent="CanvasLayer/MarginContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/MarginContainer/UI"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer/UI"]
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 20.0
-offset_bottom = 46.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -274.5
+offset_right = 274.5
+offset_bottom = 143.0
 grow_horizontal = 2
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/MarginContainer/UI/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_h2yge")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/HBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/MarginContainer/UI/HBoxContainer/VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.639216, 0, 1)
 theme_override_font_sizes/font_size = 32
 text = "Godot AdMob Plugin Demo"
 horizontal_alignment = 1
 
-[node name="ConsentStatus" type="Label" parent="CanvasLayer/MarginContainer/UI"]
+[node name="ConsentStatus" type="Label" parent="CanvasLayer/MarginContainer/UI/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 60.0
-offset_bottom = 86.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Consent Status: Unknown"
 horizontal_alignment = 1
 
-[node name="AdStatus" type="Label" parent="CanvasLayer/MarginContainer/UI"]
+[node name="AdStatus" type="Label" parent="CanvasLayer/MarginContainer/UI/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 90.0
-offset_bottom = 116.0
-grow_horizontal = 2
+layout_mode = 2
 text = "Ad Status: Not initialized"
 horizontal_alignment = 1
 
@@ -254,10 +256,6 @@ text = "Load Rewarded Ad"
 [node name="ShowRewardedButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 text = "Show Rewarded Ad"
-
-[node name="Icon" type="Sprite2D" parent="CanvasLayer"]
-position = Vector2(286, 126)
-texture = ExtResource("3_h2yge")
 
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]

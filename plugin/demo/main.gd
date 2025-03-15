@@ -3,11 +3,11 @@ extends Node2D
 # AdMob reference
 var admob
 
-# Ad configuration
-var app_id = "ca-app-pub-3940256099942544~3347511713" # Test app ID
-var banner_ad_unit_id = "ca-app-pub-3940256099942544/6300978111" # Test banner ad unit ID
-var interstitial_ad_unit_id = "ca-app-pub-3940256099942544/1033173712" # Test interstitial ad unit ID
-var rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917" # Test rewarded ad unit ID
+# Ad configuration - will be loaded from project settings
+var app_id = ""
+var banner_ad_unit_id = ""
+var interstitial_ad_unit_id = ""
+var rewarded_ad_unit_id = ""
 var is_test_device = true
 var is_real_ads = false
 
@@ -15,6 +15,22 @@ func _ready():
 	# Initialize UI elements
 	%ConsentStatus.text = "Consent Status: Unknown"
 	%AdStatus.text = "Ad Status: Not initialized"
+	
+	# Load settings from project settings
+	app_id = ProjectSettings.get_setting("admob/app_id", "")
+	banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
+	interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
+	rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
+	is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
+	is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+	
+	# Update UI with loaded settings
+	%AppIdInput.text = app_id
+	%BannerAdUnitIdInput.text = banner_ad_unit_id
+	%InterstitialAdUnitIdInput.text = interstitial_ad_unit_id
+	%RewardedAdUnitIdInput.text = rewarded_ad_unit_id
+	%TestDeviceCheckbox.button_pressed = is_test_device
+	%RealAdsCheckbox.button_pressed = is_real_ads
 	
 	# Initialize AdMob
 	admob = $AdMob

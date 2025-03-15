@@ -56,11 +56,18 @@ var config = {
 	"is_real_ads": false
 }
 
+# Auto-initialization flag
+var auto_init_with_test_ads = true
+
 # Test Ad IDs
 const TEST_APP_ID = "ca-app-pub-3940256099942544~3347511713"
 const TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
 const TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
 const TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
+
+# Default banner settings
+var default_banner_position = BannerPosition.BOTTOM
+var default_banner_size = BannerSize.BANNER
 
 func _enter_tree():
 	# Initialize plugin when running in editor
@@ -81,6 +88,27 @@ func _initialize_plugin():
 		_plugin = Engine.get_singleton(_PLUGIN_NAME)
 		_connect_signals()
 		print("AdMob plugin initialized successfully")
+		
+		# Check if we should load from project settings
+		if ProjectSettings.has_setting("admob/app_id"):
+			# Load settings from project settings
+			var app_id = ProjectSettings.get_setting("admob/app_id", "")
+			var banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
+			var interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
+			var rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
+			var is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
+			var is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+			
+			# If we have valid settings, use them
+			if is_real_ads and app_id.length() > 0:
+				initialize(app_id, banner_ad_unit_id, interstitial_ad_unit_id, rewarded_ad_unit_id, is_test_device, is_real_ads)
+				print("AdMob initialized with project settings")
+				return
+		
+		# Fall back to test ads if no valid project settings or not using real ads
+		if auto_init_with_test_ads:
+			initialize_with_test_ads()
+			print("AdMob auto-initialized with test ads")
 	else:
 		push_error("Couldn't find plugin " + _PLUGIN_NAME)
 
@@ -170,7 +198,21 @@ func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_
 		return true
 	return false
 
+## Initialize AdMob with an AdmobConfig object
+## This is a convenience method for initializing with a configuration object
+## @param config_obj The AdmobConfig object
+func initialize_with_config(config_obj: AdmobConfig):
+	return initialize(
+		config_obj.app_id,
+		config_obj.banner_ad_unit_id,
+		config_obj.interstitial_ad_unit_id,
+		config_obj.rewarded_ad_unit_id,
+		config_obj.is_test_device,
+		config_obj.is_real_ads
+	)
+
 ## Initialize AdMob with test ads
+## This is the simplest way to get started with test ads
 func initialize_with_test_ads():
 	return initialize(TEST_APP_ID, TEST_BANNER_AD_UNIT_ID, TEST_INTERSTITIAL_AD_UNIT_ID, TEST_REWARDED_AD_UNIT_ID, true, false)
 
@@ -239,6 +281,22 @@ func remove_banner_ad():
 		return true
 	return false
 
+## Load and show a banner ad in a single call
+## This is a convenience method that loads and shows a banner ad
+## @param bannerPos The position of the banner (0: Bottom, 1: Top)
+## @param size The size of the banner ("BANNER", "LARGE_BANNER", etc.)
+func load_and_show_banner_ad(bannerPos = BannerPosition.BOTTOM, size = BannerSize.BANNER):
+	if load_banner_ad(bannerPos, size):
+		# Connect one-time signal to show the banner when loaded
+		if not is_connected("banner_loaded", _on_banner_loaded_show):
+			connect("banner_loaded", _on_banner_loaded_show, CONNECT_ONE_SHOT)
+		return true
+	return false
+
+# Internal callback for load_and_show_banner_ad
+func _on_banner_loaded_show():
+	show_banner_ad()
+
 # Interstitial Ads
 
 ## Load an interstitial ad
@@ -249,9 +307,13 @@ func load_interstitial_ad():
 	return false
 
 ## Show the loaded interstitial ad
-func show_interstitial_ad():
+## If auto_reload is true, it will automatically load a new ad after showing
+func show_interstitial_ad(auto_reload: bool = true):
 	if _plugin and _plugin.isInterstitialAdLoaded():
 		_plugin.showInterstitialAd()
+		if auto_reload:
+			# We'll reload in the closed callback to ensure proper timing
+			await_interstitial_closed = auto_reload
 		return true
 	return false
 
@@ -260,6 +322,25 @@ func is_interstitial_ad_loaded():
 	if _plugin:
 		return _plugin.isInterstitialAdLoaded()
 	return false
+
+## Load and show an interstitial ad when ready
+## This is a convenience method that loads an ad and shows it when it's ready
+func load_and_show_interstitial_ad(auto_reload: bool = true):
+	if not is_interstitial_ad_loaded():
+		load_interstitial_ad()
+		# Connect one-time signal to show the ad when loaded
+		if not is_connected("interstitial_loaded", _on_interstitial_loaded_show):
+			connect("interstitial_loaded", _on_interstitial_loaded_show, CONNECT_ONE_SHOT)
+		return true
+	else:
+		return show_interstitial_ad(auto_reload)
+
+# Internal variable to track if we should auto-reload after closing
+var await_interstitial_closed: bool = false
+
+# Internal callback for load_and_show_interstitial_ad
+func _on_interstitial_loaded_show():
+	show_interstitial_ad()
 
 # Rewarded Ads
 
@@ -271,9 +352,13 @@ func load_rewarded_ad():
 	return false
 
 ## Show the loaded rewarded ad
-func show_rewarded_ad():
+## If auto_reload is true, it will automatically load a new ad after showing
+func show_rewarded_ad(auto_reload: bool = true):
 	if _plugin and _plugin.isRewardedAdLoaded():
 		_plugin.showRewardedAd()
+		if auto_reload:
+			# We'll reload in the closed callback to ensure proper timing
+			await_rewarded_closed = auto_reload
 		return true
 	return false
 
@@ -282,6 +367,25 @@ func is_rewarded_ad_loaded():
 	if _plugin:
 		return _plugin.isRewardedAdLoaded()
 	return false
+
+## Load and show a rewarded ad when ready
+## This is a convenience method that loads an ad and shows it when it's ready
+func load_and_show_rewarded_ad(auto_reload: bool = true):
+	if not is_rewarded_ad_loaded():
+		load_rewarded_ad()
+		# Connect one-time signal to show the ad when loaded
+		if not is_connected("rewarded_ad_loaded", _on_rewarded_ad_loaded_show):
+			connect("rewarded_ad_loaded", _on_rewarded_ad_loaded_show, CONNECT_ONE_SHOT)
+		return true
+	else:
+		return show_rewarded_ad(auto_reload)
+
+# Internal variable to track if we should auto-reload after closing
+var await_rewarded_closed: bool = false
+
+# Internal callback for load_and_show_rewarded_ad
+func _on_rewarded_ad_loaded_show():
+	show_rewarded_ad()
 
 # Signal handlers
 
@@ -311,6 +415,10 @@ func _on_interstitial_opened():
 
 func _on_interstitial_closed():
 	emit_signal("interstitial_closed")
+	# Auto-reload if requested
+	if await_interstitial_closed:
+		await_interstitial_closed = false
+		load_interstitial_ad()
 
 # Rewarded ad signals
 func _on_rewarded_ad_loaded():
@@ -324,6 +432,10 @@ func _on_rewarded_ad_opened():
 
 func _on_rewarded_ad_closed():
 	emit_signal("rewarded_ad_closed")
+	# Auto-reload if requested
+	if await_rewarded_closed:
+		await_rewarded_closed = false
+		load_rewarded_ad()
 
 func _on_user_earned_reward(amount, type):
 	emit_signal("user_earned_reward", amount, type)

@@ -1,10 +1,7 @@
 @tool
 extends EditorPlugin
 
-# A class member to hold the editor export plugin during its lifecycle.
-var export_plugin : AndroidExportPlugin
-
-# AdMob Configuration UI elements
+const PLUGIN_NAME = "GodotAdMobConfig"
 const SETTINGS_SECTION = "admob"
 
 # Settings keys
@@ -27,10 +24,6 @@ var save_button: Button
 var reset_button: Button
 
 func _enter_tree():
-	# Initialization of the export plugin
-	export_plugin = AndroidExportPlugin.new()
-	add_export_plugin(export_plugin)
-	
 	# Create the dock
 	dock_scene = _create_dock()
 	# Add the dock to the editor
@@ -42,17 +35,11 @@ func _enter_tree():
 	# Load settings into UI
 	_load_settings()
 
-
 func _exit_tree():
-	# Clean-up of the export plugin
-	remove_export_plugin(export_plugin)
-	export_plugin = null
-	
 	# Remove the dock from the editor
 	if dock_scene:
 		remove_control_from_bottom_panel(dock_scene)
 		dock_scene.queue_free()
-
 
 # Create the dock UI
 func _create_dock() -> Control:
@@ -295,31 +282,3 @@ func _on_reset_button_pressed():
 	
 	# Save the reset settings
 	_save_settings()
-
-# Android Export Plugin class
-class AndroidExportPlugin extends EditorExportPlugin:
-	
-	var _plugin_name = "GodotAdMobAndroidPlugin"
-
-	func _supports_platform(platform):
-		if platform is EditorExportPlatformAndroid:
-			return true
-		return false
-
-	func _get_android_libraries(platform, debug):
-		if debug:
-			return PackedStringArray([_plugin_name + "/bin/debug/" + _plugin_name + "-debug.aar"])
-		else:
-			return PackedStringArray([_plugin_name + "/bin/release/" + _plugin_name + "-release.aar"])
-
-	func _get_android_dependencies(platform, debug):
-		# TODO: Add remote dependices here.
-		if debug:
-			return PackedStringArray(["com.google.android.ump:user-messaging-platform:3.1.0",
-			"com.google.android.gms:play-services-ads:24.1.0"])
-		else:
-			return PackedStringArray(["com.google.android.ump:user-messaging-platform:3.1.0",
-			"com.google.android.gms:play-services-ads:24.1.0"])
-
-	func _get_name():
-		return _plugin_name
