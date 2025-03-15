@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cg3hylang5fxn"]
+[gd_scene load_steps=4 format=3 uid="uid://cg3hylang5fxn"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" uid="uid://cg5ljne64g41y" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Script" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Texture2D" uid="uid://h7335yi660ja" path="res://addons/GodotAdMobAndroidPlugin/icon.png" id="3_h2yge"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
@@ -32,7 +33,8 @@ anchor_right = 1.0
 offset_top = 20.0
 offset_bottom = 46.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0, 0.639216, 0, 1)
+theme_override_font_sizes/font_size = 32
 text = "Godot AdMob Plugin Demo"
 horizontal_alignment = 1
 
@@ -252,6 +254,10 @@ text = "Load Rewarded Ad"
 [node name="ShowRewardedButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2
 text = "Show Rewarded Ad"
+
+[node name="Icon" type="Sprite2D" parent="CanvasLayer"]
+position = Vector2(286, 126)
+texture = ExtResource("3_h2yge")
 
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]
