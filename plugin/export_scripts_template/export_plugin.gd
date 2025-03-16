@@ -14,6 +14,7 @@ const SETTINGS_INTERSTITIAL_AD_UNIT_ID = "admob/interstitial_ad_unit_id"
 const SETTINGS_REWARDED_AD_UNIT_ID = "admob/rewarded_ad_unit_id"
 const SETTINGS_IS_TEST_DEVICE = "admob/is_test_device"
 const SETTINGS_IS_REAL_ADS = "admob/is_real_ads"
+const SETTINGS_DEBUG_GEOGRAPHY = "admob/debug_geography"
 
 # UI elements
 var dock_scene: Control
@@ -23,6 +24,7 @@ var interstitial_ad_unit_id_input: LineEdit
 var rewarded_ad_unit_id_input: LineEdit
 var test_device_checkbox: CheckBox
 var real_ads_checkbox: CheckBox
+var debug_geo_option: OptionButton
 var save_button: Button
 var reset_button: Button
 
@@ -94,57 +96,111 @@ func _create_dock() -> Control:
 	var separator = HSeparator.new()
 	content.add_child(separator)
 	
+	# Create a horizontal split container for the two columns
+	var split_container = HBoxContainer.new()
+	split_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	split_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(split_container)
+	
+	# Left column for IDs
+	var left_column = VBoxContainer.new()
+	left_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left_column.name = "IDsColumn"
+	split_container.add_child(left_column)
+	
+	# Add a title for the left column
+	var ids_title = Label.new()
+	ids_title.text = "Ad Unit IDs"
+	ids_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	left_column.add_child(ids_title)
+	
 	# App ID
 	var app_id_label = Label.new()
 	app_id_label.text = "App ID:"
-	content.add_child(app_id_label)
+	left_column.add_child(app_id_label)
 	
 	app_id_input = LineEdit.new()
 	app_id_input.placeholder_text = "Enter App ID"
 	app_id_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(app_id_input)
+	left_column.add_child(app_id_input)
 	
 	# Banner Ad Unit ID
 	var banner_ad_unit_id_label = Label.new()
 	banner_ad_unit_id_label.text = "Banner Ad Unit ID:"
-	content.add_child(banner_ad_unit_id_label)
+	left_column.add_child(banner_ad_unit_id_label)
 	
 	banner_ad_unit_id_input = LineEdit.new()
 	banner_ad_unit_id_input.placeholder_text = "Enter Banner Ad Unit ID"
 	banner_ad_unit_id_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(banner_ad_unit_id_input)
+	left_column.add_child(banner_ad_unit_id_input)
 	
 	# Interstitial Ad Unit ID
 	var interstitial_ad_unit_id_label = Label.new()
 	interstitial_ad_unit_id_label.text = "Interstitial Ad Unit ID:"
-	content.add_child(interstitial_ad_unit_id_label)
+	left_column.add_child(interstitial_ad_unit_id_label)
 	
 	interstitial_ad_unit_id_input = LineEdit.new()
 	interstitial_ad_unit_id_input.placeholder_text = "Enter Interstitial Ad Unit ID"
 	interstitial_ad_unit_id_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(interstitial_ad_unit_id_input)
+	left_column.add_child(interstitial_ad_unit_id_input)
 	
 	# Rewarded Ad Unit ID
 	var rewarded_ad_unit_id_label = Label.new()
 	rewarded_ad_unit_id_label.text = "Rewarded Ad Unit ID:"
-	content.add_child(rewarded_ad_unit_id_label)
+	left_column.add_child(rewarded_ad_unit_id_label)
 	
 	rewarded_ad_unit_id_input = LineEdit.new()
 	rewarded_ad_unit_id_input.placeholder_text = "Enter Rewarded Ad Unit ID"
 	rewarded_ad_unit_id_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(rewarded_ad_unit_id_input)
+	left_column.add_child(rewarded_ad_unit_id_input)
+	
+	# Add a small separator between columns
+	var column_separator = VSeparator.new()
+	split_container.add_child(column_separator)
+	
+	# Right column for options
+	var right_column = VBoxContainer.new()
+	right_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_column.name = "OptionsColumn"
+	split_container.add_child(right_column)
+	
+	# Add a title for the right column
+	var options_title = Label.new()
+	options_title.text = "Options"
+	options_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	right_column.add_child(options_title)
+	
+	# Add some spacing to align with the left column
+	var spacing = Control.new()
+	spacing.custom_minimum_size = Vector2(0, 10)
+	right_column.add_child(spacing)
 	
 	# Test Device Checkbox
 	test_device_checkbox = CheckBox.new()
 	test_device_checkbox.text = "Test Device"
 	test_device_checkbox.button_pressed = true
-	content.add_child(test_device_checkbox)
+	right_column.add_child(test_device_checkbox)
 	
 	# Real Ads Checkbox
 	real_ads_checkbox = CheckBox.new()
 	real_ads_checkbox.text = "Use Real Ads"
 	real_ads_checkbox.button_pressed = false
-	content.add_child(real_ads_checkbox)
+	right_column.add_child(real_ads_checkbox)
+	
+	# Debug Geography Option
+	var debug_geo_label = Label.new()
+	debug_geo_label.text = "Debug Geography:"
+	right_column.add_child(debug_geo_label)
+	
+	debug_geo_option = OptionButton.new()
+	debug_geo_option.add_item("Disabled", 0)
+	debug_geo_option.add_item("EEA", 1)
+	debug_geo_option.add_item("Not EEA", 2)
+	debug_geo_option.select(0)
+	debug_geo_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_column.add_child(debug_geo_option)
 	
 	# Buttons container
 	var buttons_container = HBoxContainer.new()
@@ -241,6 +297,17 @@ func _register_project_settings():
 			"hint_string": ""
 		})
 	
+	# Debug Geography
+	if not ProjectSettings.has_setting(SETTINGS_DEBUG_GEOGRAPHY):
+		ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
+		ProjectSettings.set_initial_value(SETTINGS_DEBUG_GEOGRAPHY, 0)
+		ProjectSettings.add_property_info({
+			"name": SETTINGS_DEBUG_GEOGRAPHY,
+			"type": TYPE_INT,
+			"hint": PROPERTY_HINT_ENUM,
+			"hint_string": "Disabled,EEA,Not EEA"
+		})
+	
 	# Save the project settings
 	ProjectSettings.save()
 
@@ -252,6 +319,7 @@ func _load_settings():
 	rewarded_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
 	test_device_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_TEST_DEVICE, true)
 	real_ads_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
+	debug_geo_option.selected = ProjectSettings.get_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
 
 # Save settings from UI to project settings
 func _save_settings():
@@ -261,6 +329,7 @@ func _save_settings():
 	ProjectSettings.set_setting(SETTINGS_REWARDED_AD_UNIT_ID, rewarded_ad_unit_id_input.text)
 	ProjectSettings.set_setting(SETTINGS_IS_TEST_DEVICE, test_device_checkbox.button_pressed)
 	ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, real_ads_checkbox.button_pressed)
+	ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, debug_geo_option.selected)
 	
 	# Save the project settings
 	ProjectSettings.save()
@@ -292,6 +361,7 @@ func _on_reset_button_pressed():
 	rewarded_ad_unit_id_input.text = ""
 	test_device_checkbox.button_pressed = true
 	real_ads_checkbox.button_pressed = false
+	debug_geo_option.select(0)
 	
 	# Save the reset settings
 	_save_settings()

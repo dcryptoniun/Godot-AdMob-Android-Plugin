@@ -15,6 +15,7 @@ banner_ad_unit_id="ca-app-pub-8711132323779247/4013490520"
 is_real_ads=true
 interstitial_ad_unit_id="ca-app-pub-8711132323779247/4964019231"
 rewarded_ad_unit_id="ca-app-pub-8711132323779247/7960087354"
+debug_geography=1
 
 [application]
 
