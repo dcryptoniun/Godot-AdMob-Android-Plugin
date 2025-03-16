@@ -27,7 +27,7 @@ plugin
 
 #### Tips
 Additional dependencies added to [`plugin/build.gradle.kts`](plugin/build.gradle.kts) should be added to the `_get_android_dependencies`
-function in [`plugin/export_scripts_template/export_plugin.gd`](plugin/export_scripts_template/export_plugin.gd).
+function in [`plugin/export_scripts_template/export_plugin.gd`](plugin/export_scripts_template/export_plugin.gd). Note that debug geography values should use `OTHER` instead of the deprecated `NOT_EEA`.
 
 ##### Simplify access to the exposed Java / Kotlin APIs
 

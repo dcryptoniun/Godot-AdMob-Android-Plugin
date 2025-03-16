@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cg3hylang5fxn"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" uid="uid://io3eckx41uup" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Script" uid="uid://bpup56oi48643" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
 [ext_resource type="Texture2D" uid="uid://cs1sdsj77ry5h" path="res://icon.png" id="3_h2yge"]
 
 [node name="Main" type="Node2D"]
@@ -75,10 +75,12 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_constants/separation = 20
 
 [node name="InitializationSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 21
 
 [node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
@@ -95,56 +97,75 @@ text = "App ID:"
 [node name="AppIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 text = "ca-app-pub-3940256099942544~3347511713"
 placeholder_text = "Enter App ID"
+editable = false
+expand_to_text_length = true
 
 [node name="BannerAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
+size_flags_horizontal = 0
 text = "Banner Ad Unit ID:"
 
 [node name="BannerAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 text = "ca-app-pub-3940256099942544/6300978111"
 placeholder_text = "Enter Banner Ad Unit ID"
+editable = false
+expand_to_text_length = true
 
 [node name="InterstitialAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
+size_flags_horizontal = 0
 text = "Interstitial Ad Unit ID:"
 
 [node name="InterstitialAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 text = "ca-app-pub-3940256099942544/1033173712"
 placeholder_text = "Enter Interstitial Ad Unit ID"
+editable = false
+expand_to_text_length = true
 
 [node name="RewardedAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
+size_flags_horizontal = 0
 text = "Rewarded Ad Unit ID:"
 
 [node name="RewardedAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 text = "ca-app-pub-3940256099942544/5224354917"
 placeholder_text = "Enter Rewarded Ad Unit ID"
+expand_to_text_length = true
 
 [node name="TestDeviceCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
 button_pressed = true
 text = "Test Device"
 
 [node name="RealAdsCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Use Real Ads"
 
 [node name="InitializeButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Initialize AdMob"
 
 [node name="ConsentSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection"]
 layout_mode = 2
@@ -160,6 +181,8 @@ text = "Show Consent Form"
 
 [node name="BannerSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection"]
 layout_mode = 2
@@ -221,6 +244,8 @@ text = "Remove Banner Ad"
 
 [node name="InterstitialSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InterstitialSection"]
 layout_mode = 2
@@ -240,6 +265,8 @@ text = "Show Interstitial Ad"
 
 [node name="RewardedSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/RewardedSection"]
 layout_mode = 2

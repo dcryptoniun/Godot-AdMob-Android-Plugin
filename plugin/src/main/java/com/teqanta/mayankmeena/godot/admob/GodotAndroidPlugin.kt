@@ -31,6 +31,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     private var bannerAdSize = AdSize.BANNER
     private var bannerPosition = 0 // 0: Bottom, 1: Top
     private var bannerVisible = false
+    private var debugGeography = 0 // 0: Disabled, 1: EEA, 2: Not EEA
     
     // Ad IDs
     private var appId = ""
@@ -72,7 +73,8 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         interstitialAdUnitId: String = "",
         rewardedAdUnitId: String = "",
         isTestDevice: Boolean = false,
-        isReal: Boolean = false
+        isReal: Boolean = false,
+        debugGeography: Int = 0
     ) {
         runOnUiThread {
             try {
@@ -83,6 +85,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 this.rewardedAdUnitId = rewardedAdUnitId
                 this.isTestDevice = isTestDevice
                 this.isUsingRealAds = isReal
+                this.debugGeography = debugGeography
                 
                 // Set up Mobile Ads SDK
                 MobileAds.initialize(activity!!) {}
@@ -114,8 +117,9 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         val rewardedAdUnitId = config["rewarded_ad_unit_id"] as? String ?: ""
         val isTestDevice = config["is_test_device"] as? Boolean ?: false
         val isReal = config["is_real"] as? Boolean ?: false
+        val debugGeography = config["debug_geography"] as? Int ?: 0
         
-        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal)
+        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal, debugGeography)
     }
     
     // Consent Management for EU users
@@ -126,10 +130,17 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         if (isTestDevice) {
             params.setConsentDebugSettings(
                 activity?.let {
-                    ConsentDebugSettings.Builder(it)
-                        .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                        .addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
-                        .build()
+                    val builder = ConsentDebugSettings.Builder(it)
+                    
+                    // Set debug geography based on parameter
+                    when (debugGeography) {
+                        1 -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                        2 -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_OTHER)
+                        else -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_DISABLED)
+                    }
+                    
+                    builder.addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
+                    builder.build()
                 }
             )
         }
@@ -219,6 +230,16 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     @UsedByGodot
     fun resetConsentStatus() {
         runOnUiThread {
+            consentInformation?.reset()
+            initializeConsentForm()
+        }
+    }
+    
+    @UsedByGodot
+    fun setDebugGeography(geography: Int) {
+        runOnUiThread {
+            debugGeography = geography
+            // Reset and reinitialize consent to apply new geography setting
             consentInformation?.reset()
             initializeConsentForm()
         }

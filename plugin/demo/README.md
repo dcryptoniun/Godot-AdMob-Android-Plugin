@@ -32,12 +32,12 @@ is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
 
 # Initialize AdMob with these settings
 admob.initialize(
-    app_id,
-    banner_ad_unit_id,
-    interstitial_ad_unit_id,
-    rewarded_ad_unit_id,
-    is_test_device,
-    is_real_ads
+	app_id,
+	banner_ad_unit_id,
+	interstitial_ad_unit_id,
+	rewarded_ad_unit_id,
+	is_test_device,
+	is_real_ads
 )
 ```
 

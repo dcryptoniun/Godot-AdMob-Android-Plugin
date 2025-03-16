@@ -31,6 +31,13 @@ enum ConsentStatus {
 	OBTAINED
 }
 
+# Debug geography for consent testing
+enum DebugGeography {
+	DISABLED,
+	EEA,
+	OTHER
+}
+
 # Signals
 signal consent_form_dismissed
 signal consent_status_changed(status)
@@ -53,7 +60,8 @@ var config = {
 	"interstitial_ad_unit_id": "",
 	"rewarded_ad_unit_id": "",
 	"is_test_device": true,
-	"is_real_ads": false
+	"is_real_ads": false,
+	"debug_geography": DebugGeography.DISABLED
 }
 
 # Auto-initialization flag
@@ -98,10 +106,11 @@ func _initialize_plugin():
 			var rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
 			var is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
 			var is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+			var debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 			
 			# If we have valid settings, use them
 			if is_real_ads and app_id.length() > 0:
-				initialize(app_id, banner_ad_unit_id, interstitial_ad_unit_id, rewarded_ad_unit_id, is_test_device, is_real_ads)
+				initialize(app_id, banner_ad_unit_id, interstitial_ad_unit_id, rewarded_ad_unit_id, is_test_device, is_real_ads, debug_geography)
 				print("AdMob initialized with project settings")
 				return
 		
@@ -175,8 +184,10 @@ func _connect_signals():
 ## @param rewarded_ad_unit_id The rewarded ad unit ID
 ## @param is_test_device Whether to use test device
 ## @param is_real_ads Whether to use real ads
+## @param debug_geography The debug geography setting for consent testing (0: Disabled, 1: EEA, 2: Not EEA)
 func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_id = "", 
-				p_rewarded_ad_unit_id = "", p_is_test_device = true, p_is_real_ads = false):
+				p_rewarded_ad_unit_id = "", p_is_test_device = true, p_is_real_ads = false,
+				p_debug_geography = DebugGeography.DISABLED):
 	# Update configuration
 	config.app_id = p_app_id
 	config.banner_ad_unit_id = p_banner_ad_unit_id
@@ -184,6 +195,7 @@ func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_
 	config.rewarded_ad_unit_id = p_rewarded_ad_unit_id
 	config.is_test_device = p_is_test_device
 	config.is_real_ads = p_is_real_ads
+	config.debug_geography = p_debug_geography
 	
 	# Initialize plugin
 	if _plugin:
@@ -193,7 +205,8 @@ func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_
 			config.interstitial_ad_unit_id,
 			config.rewarded_ad_unit_id,
 			config.is_test_device,
-			config.is_real_ads
+			config.is_real_ads,
+			config.debug_geography
 		)
 		return true
 	return false

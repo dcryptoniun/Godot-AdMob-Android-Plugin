@@ -12,12 +12,12 @@ This plugin provides a simple way to integrate Google AdMob ads into your Godot 
 extends Node
 
 func _ready():
-    # The AdMob node will auto-initialize with test ads
-    # You don't need to write any code for basic testing
-    pass
-    
-    # When ready for production, just set your real ad IDs:
-    # $AdMob.initialize("your-app-id", "your-banner-id", "your-interstitial-id", "your-rewarded-id", false, true)
+	# The AdMob node will auto-initialize with test ads
+	# You don't need to write any code for basic testing
+	pass
+	
+	# When ready for production, just set your real ad IDs:
+	# $AdMob.initialize("your-app-id", "your-banner-id", "your-interstitial-id", "your-rewarded-id", false, true)
 ```
 
 ## Showing Ads
@@ -41,11 +41,11 @@ Connect to the reward signal to give players their rewards:
 
 ```gdscript
 func _ready():
-    $AdMob.connect("user_earned_reward", _on_user_earned_reward)
+	$AdMob.connect("user_earned_reward", _on_user_earned_reward)
 
 func _on_user_earned_reward(amount, type):
-    # Give the player their reward
-    player.add_coins(amount)
+	# Give the player their reward
+	player.add_coins(amount)
 ```
 
 See the `example_usage.gd` file for a complete example.

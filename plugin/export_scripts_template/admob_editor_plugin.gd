@@ -11,6 +11,7 @@ const SETTINGS_INTERSTITIAL_AD_UNIT_ID = "admob/interstitial_ad_unit_id"
 const SETTINGS_REWARDED_AD_UNIT_ID = "admob/rewarded_ad_unit_id"
 const SETTINGS_IS_TEST_DEVICE = "admob/is_test_device"
 const SETTINGS_IS_REAL_ADS = "admob/is_real_ads"
+const SETTINGS_DEBUG_GEOGRAPHY = "admob/debug_geography"
 
 # UI elements
 var dock_scene: Control
@@ -20,6 +21,7 @@ var interstitial_ad_unit_id_input: LineEdit
 var rewarded_ad_unit_id_input: LineEdit
 var test_device_checkbox: CheckBox
 var real_ads_checkbox: CheckBox
+var debug_geo_option: OptionButton
 var save_button: Button
 var reset_button: Button
 
@@ -133,6 +135,19 @@ func _create_dock() -> Control:
 	real_ads_checkbox.button_pressed = false
 	content.add_child(real_ads_checkbox)
 	
+	# Debug Geography Option
+	var debug_geo_label = Label.new()
+	debug_geo_label.text = "Debug Geography:"
+	content.add_child(debug_geo_label)
+	
+	debug_geo_option = OptionButton.new()
+	debug_geo_option.add_item("Disabled", 0)
+	debug_geo_option.add_item("EEA", 1)
+	debug_geo_option.add_item("Not EEA", 2)
+	debug_geo_option.select(0)
+	debug_geo_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_child(debug_geo_option)
+	
 	# Buttons container
 	var buttons_container = HBoxContainer.new()
 	buttons_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -228,6 +243,17 @@ func _register_project_settings():
 			"hint_string": ""
 		})
 	
+	# Debug Geography
+	if not ProjectSettings.has_setting(SETTINGS_DEBUG_GEOGRAPHY):
+		ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
+		ProjectSettings.set_initial_value(SETTINGS_DEBUG_GEOGRAPHY, 0)
+		ProjectSettings.add_property_info({
+			"name": SETTINGS_DEBUG_GEOGRAPHY,
+			"type": TYPE_INT,
+			"hint": PROPERTY_HINT_ENUM,
+			"hint_string": "Disabled,EEA,Not EEA"
+		})
+	
 	# Save the project settings
 	ProjectSettings.save()
 
@@ -239,6 +265,7 @@ func _load_settings():
 	rewarded_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
 	test_device_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_TEST_DEVICE, true)
 	real_ads_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
+	debug_geo_option.selected = ProjectSettings.get_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
 
 # Save settings from UI to project settings
 func _save_settings():
@@ -248,6 +275,7 @@ func _save_settings():
 	ProjectSettings.set_setting(SETTINGS_REWARDED_AD_UNIT_ID, rewarded_ad_unit_id_input.text)
 	ProjectSettings.set_setting(SETTINGS_IS_TEST_DEVICE, test_device_checkbox.button_pressed)
 	ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, real_ads_checkbox.button_pressed)
+	ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, debug_geo_option.selected)
 	
 	# Save the project settings
 	ProjectSettings.save()
@@ -279,6 +307,7 @@ func _on_reset_button_pressed():
 	rewarded_ad_unit_id_input.text = ""
 	test_device_checkbox.button_pressed = true
 	real_ads_checkbox.button_pressed = false
+	debug_geo_option.select(0)
 	
 	# Save the reset settings
 	_save_settings()

@@ -13,6 +13,8 @@ config_version=5
 app_id="ca-app-pub-8711132323779247~9298440940"
 banner_ad_unit_id="ca-app-pub-8711132323779247/4013490520"
 is_real_ads=true
+interstitial_ad_unit_id="ca-app-pub-8711132323779247/4964019231"
+rewarded_ad_unit_id="ca-app-pub-8711132323779247/7960087354"
 
 [application]
 
