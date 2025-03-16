@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cg3hylang5fxn"]
+[gd_scene load_steps=4 format=3 uid="uid://bpdvddifmfbmg"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" uid="uid://bpup56oi48643" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Script" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
 [ext_resource type="Texture2D" uid="uid://cs1sdsj77ry5h" path="res://icon.png" id="3_h2yge"]
 
 [node name="Main" type="Node2D"]
@@ -11,6 +11,14 @@ script = ExtResource("1_j0gfq")
 script = ExtResource("2_aqnxl")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0222567, 0.118446, 0.0609443, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 15
@@ -142,6 +150,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "ca-app-pub-3940256099942544/5224354917"
 placeholder_text = "Enter Rewarded Ad Unit ID"
+editable = false
 expand_to_text_length = true
 
 [node name="TestDeviceCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
