@@ -10,12 +10,12 @@ config_version=5
 
 [admob]
 
-app_id="ca-app-pub-8711132323779247~9298440940"
-banner_ad_unit_id="ca-app-pub-8711132323779247/4013490520"
-is_real_ads=true
-interstitial_ad_unit_id="ca-app-pub-8711132323779247/4964019231"
-rewarded_ad_unit_id="ca-app-pub-8711132323779247/7960087354"
-debug_geography=1
+app_id=""
+banner_ad_unit_id=""
+is_real_ads=false
+interstitial_ad_unit_id=""
+rewarded_ad_unit_id=""
+debug_geography=0
 
 [application]
 

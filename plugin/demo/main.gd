@@ -10,6 +10,7 @@ var interstitial_ad_unit_id = ""
 var rewarded_ad_unit_id = ""
 var is_test_device = true
 var is_real_ads = false
+var debug_geography = 0
 
 func _ready():
 	# Initialize UI elements
@@ -23,6 +24,7 @@ func _ready():
 	rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
 	is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
 	is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+	debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 	
 	# Update UI with loaded settings
 	%AppIdInput.text = app_id
@@ -77,7 +79,8 @@ func _initialize_admob():
 			interstitial_ad_unit_id,
 			rewarded_ad_unit_id,
 			is_test_device,
-			is_real_ads
+			is_real_ads,
+			debug_geography
 		)
 		%AdStatus.text = "Ad Status: Initialized"
 
@@ -90,6 +93,8 @@ func _on_initialize_button_pressed():
 	rewarded_ad_unit_id = %RewardedAdUnitIdInput.text
 	is_test_device = %TestDeviceCheckbox.button_pressed
 	is_real_ads = %RealAdsCheckbox.button_pressed
+	# Keep debug_geography from project settings
+	debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 	
 	# Re-initialize AdMob
 	_initialize_admob()
