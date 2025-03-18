@@ -1,8 +1,5 @@
 extends Node2D
 
-# AdMob reference
-var admob
-
 # Ad configuration - will be loaded from configuration resource
 var app_id = ""
 var banner_ad_unit_id = ""
@@ -38,46 +35,44 @@ func _ready():
 	%RewardedAdUnitIdInput.text = rewarded_ad_unit_id
 	%RealAdsCheckbox.button_pressed = is_real_ads
 	
-	# Initialize AdMob
-	admob = $AdMob
-	if admob:
-		# Connect signals
-		_connect_signals()
-		
-		# Initialize AdMob
-		_initialize_admob()
+	# Connect signals to the AdMob singleton
+	_connect_signals()
+	
+	# Check if AdMob singleton is available
+	if AdMob:
+		%AdStatus.text = "Ad Status: AdMob singleton available"
 	else:
-		printerr("Couldn't find AdMob node")
-		%AdStatus.text = "Ad Status: AdMob node not found"
+		printerr("AdMob singleton not available")
+		%AdStatus.text = "Ad Status: AdMob singleton not available"
 
-# Connect all signals from the AdMob wrapper
+# Connect all signals from the AdMob singleton
 func _connect_signals():
-	if admob:
+	if AdMob:
 		# Consent signals
-		admob.connect("consent_form_dismissed", _on_consent_form_dismissed)
-		admob.connect("consent_status_changed", _on_consent_status_changed)
+		AdMob.connect("consent_form_dismissed", _on_consent_form_dismissed)
+		AdMob.connect("consent_status_changed", _on_consent_status_changed)
 		
 		# Banner ad signals
-		admob.connect("banner_loaded", _on_banner_loaded)
-		admob.connect("banner_failed_to_load", _on_banner_failed_to_load)
+		AdMob.connect("banner_loaded", _on_banner_loaded)
+		AdMob.connect("banner_failed_to_load", _on_banner_failed_to_load)
 		
 		# Interstitial ad signals
-		admob.connect("interstitial_loaded", _on_interstitial_loaded)
-		admob.connect("interstitial_failed_to_load", _on_interstitial_failed_to_load)
-		admob.connect("interstitial_opened", _on_interstitial_opened)
-		admob.connect("interstitial_closed", _on_interstitial_closed)
+		AdMob.connect("interstitial_loaded", _on_interstitial_loaded)
+		AdMob.connect("interstitial_failed_to_load", _on_interstitial_failed_to_load)
+		AdMob.connect("interstitial_opened", _on_interstitial_opened)
+		AdMob.connect("interstitial_closed", _on_interstitial_closed)
 		
 		# Rewarded ad signals
-		admob.connect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
-		admob.connect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
-		admob.connect("rewarded_ad_opened", _on_rewarded_ad_opened)
-		admob.connect("rewarded_ad_closed", _on_rewarded_ad_closed)
-		admob.connect("user_earned_reward", _on_user_earned_reward)
+		AdMob.connect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
+		AdMob.connect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
+		AdMob.connect("rewarded_ad_opened", _on_rewarded_ad_opened)
+		AdMob.connect("rewarded_ad_closed", _on_rewarded_ad_closed)
+		AdMob.connect("user_earned_reward", _on_user_earned_reward)
 
 # Initialize AdMob with configuration
 func _initialize_admob():
-	if admob:
-		admob.initialize(
+	if AdMob:
+		AdMob.initialize(
 			app_id,
 			banner_ad_unit_id,
 			interstitial_ad_unit_id,
@@ -100,67 +95,67 @@ func _on_initialize_button_pressed():
 
 # Consent management
 func _on_show_consent_form_button_pressed():
-	if admob:
-		admob.show_consent_form()
+	if AdMob:
+		AdMob.show_consent_form()
 
 # Banner ads
 func _on_load_banner_button_pressed():
-	if admob:
+	if AdMob:
 		# Get banner position (0: Bottom, 1: Top)
-		var bannerPos = admob.BannerPosition.BOTTOM
+		var bannerPos = AdMob.BannerPosition.BOTTOM
 		if %BannerPositionOption.selected == 1:
-			bannerPos = admob.BannerPosition.TOP
+			bannerPos = AdMob.BannerPosition.TOP
 		
 		# Get banner size
-		var size = admob.BannerSize.BANNER
+		var size = AdMob.BannerSize.BANNER
 		var size_option = %BannerSizeOption.selected
 		if size_option == 1:
-			size = admob.BannerSize.LARGE_BANNER
+			size = AdMob.BannerSize.LARGE_BANNER
 		elif size_option == 2:
-			size = admob.BannerSize.MEDIUM_RECTANGLE
+			size = AdMob.BannerSize.MEDIUM_RECTANGLE
 		elif size_option == 3:
-			size = admob.BannerSize.FULL_BANNER
+			size = AdMob.BannerSize.FULL_BANNER
 		elif size_option == 4:
-			size = admob.BannerSize.LEADERBOARD
+			size = AdMob.BannerSize.LEADERBOARD
 		
-		admob.load_banner_ad(bannerPos, size)
+		AdMob.load_banner_ad(bannerPos, size)
 		%AdStatus.text = "Ad Status: Loading banner..."
 
 func _on_show_banner_button_pressed():
-	if admob:
-		admob.show_banner_ad()
+	if AdMob:
+		AdMob.show_banner_ad()
 
 func _on_hide_banner_button_pressed():
-	if admob:
-		admob.hide_banner_ad()
+	if AdMob:
+		AdMob.hide_banner_ad()
 
 func _on_remove_banner_button_pressed():
-	if admob:
-		admob.remove_banner_ad()
+	if AdMob:
+		AdMob.remove_banner_ad()
 
 # Interstitial ads
 func _on_load_interstitial_button_pressed():
-	if admob:
-		admob.load_interstitial_ad()
+	if AdMob:
+		AdMob.load_interstitial_ad()
 		%AdStatus.text = "Ad Status: Loading interstitial..."
 
 func _on_show_interstitial_button_pressed():
-	if admob:
-		if admob.is_interstitial_ad_loaded():
-			admob.show_interstitial_ad()
+	if AdMob:
+		if AdMob.is_interstitial_ad_loaded():
+			AdMob.show_interstitial_ad()
 		else:
 			%AdStatus.text = "Ad Status: Interstitial not loaded yet"
 
 # Rewarded ads
 func _on_load_rewarded_button_pressed():
-	if admob:
-		admob.load_rewarded_ad()
+	if AdMob:
+		AdMob.load_rewarded_ad()
 		%AdStatus.text = "Ad Status: Loading rewarded ad..."
 
 func _on_show_rewarded_button_pressed():
-	if admob:
-		if admob.is_rewarded_ad_loaded():
-			admob.show_rewarded_ad()
+	if AdMob:
+		if AdMob.is_rewarded_ad_loaded():
+			AdMob.show_rewarded_ad()
 		else:
 			%AdStatus.text = "Ad Status: Rewarded ad not loaded yet"
 

@@ -16,6 +16,10 @@ run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://cs1sdsj77ry5h"
 
+[autoload]
+
+AdMob="*res://addons/GodotAdMobAndroidPlugin/AdMob.gd"
+
 [debug]
 
 settings/stdout/verbose_stdout=true
