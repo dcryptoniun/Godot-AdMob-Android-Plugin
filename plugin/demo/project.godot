@@ -10,12 +10,12 @@ config_version=5
 
 [admob]
 
-app_id=""
-banner_ad_unit_id=""
+app_id="ca-app-pub-3940256099942544~3347511713"
+banner_ad_unit_id="ca-app-pub-3940256099942544/6300978111"
 is_real_ads=false
-interstitial_ad_unit_id=""
-rewarded_ad_unit_id=""
-debug_geography=0
+interstitial_ad_unit_id="ca-app-pub-3940256099942544/1033173712"
+rewarded_ad_unit_id="ca-app-pub-3940256099942544/5224354917"
+debug_geography=1
 
 [application]
 
@@ -28,6 +28,7 @@ config/icon="uid://cs1sdsj77ry5h"
 [debug]
 
 settings/stdout/verbose_stdout=true
+gdscript/warnings/unused_private_class_variable=0
 gdscript/warnings/unused_parameter=0
 
 [display]

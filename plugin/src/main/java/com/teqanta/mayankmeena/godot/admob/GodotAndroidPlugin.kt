@@ -26,12 +26,10 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     private var rewardedAd: RewardedAd? = null
     private var consentInformation: ConsentInformation? = null
     private var consentForm: ConsentForm? = null
-    private var isTestDevice = false
     private var isUsingRealAds = false
     private var bannerAdSize = AdSize.BANNER
     private var bannerPosition = 0 // 0: Bottom, 1: Top
     private var bannerVisible = false
-    private var debugGeography = 0 // 0: Disabled, 1: EEA, 2: Not EEA
     
     // Ad IDs
     private var appId = ""
@@ -51,6 +49,10 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         return setOf(
             SignalInfo("consent_form_dismissed"),
             SignalInfo("consent_status_changed", String::class.java),
+            SignalInfo("consent_form_load_success"),
+            SignalInfo("consent_form_load_failure", String::class.java),
+            SignalInfo("consent_info_update_success"),
+            SignalInfo("consent_info_update_failure", String::class.java),
             SignalInfo("banner_loaded"),
             SignalInfo("banner_failed_to_load", String::class.java),
             SignalInfo("interstitial_loaded"),
@@ -72,9 +74,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         bannerAdUnitId: String = "",
         interstitialAdUnitId: String = "",
         rewardedAdUnitId: String = "",
-        isTestDevice: Boolean = false,
-        isReal: Boolean = false,
-        debugGeography: Int = 0
+        isReal: Boolean = false
     ) {
         runOnUiThread {
             try {
@@ -83,9 +83,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 this.bannerAdUnitId = bannerAdUnitId
                 this.interstitialAdUnitId = interstitialAdUnitId
                 this.rewardedAdUnitId = rewardedAdUnitId
-                this.isTestDevice = isTestDevice
                 this.isUsingRealAds = isReal
-                this.debugGeography = debugGeography
                 
                 // Set up Mobile Ads SDK
                 MobileAds.initialize(activity!!) {}
@@ -115,35 +113,18 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         val bannerAdUnitId = config["banner_ad_unit_id"] as? String ?: ""
         val interstitialAdUnitId = config["interstitial_ad_unit_id"] as? String ?: ""
         val rewardedAdUnitId = config["rewarded_ad_unit_id"] as? String ?: ""
-        val isTestDevice = config["is_test_device"] as? Boolean ?: false
-        val isReal = config["is_real"] as? Boolean ?: false
-        val debugGeography = config["debug_geography"] as? Int ?: 0
+        val isReal = config["is_real_ads"] as? Boolean ?: false
         
-        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal, debugGeography)
+        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isReal)
     }
     
     // Consent Management for EU users
+    
     private fun initializeConsentForm() {
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
         
-        if (isTestDevice) {
-            params.setConsentDebugSettings(
-                activity?.let {
-                    val builder = ConsentDebugSettings.Builder(it)
-                    
-                    // Set debug geography based on parameter
-                    when (debugGeography) {
-                        1 -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                        2 -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_OTHER)
-                        else -> builder.setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_DISABLED)
-                    }
-                    
-                    builder.addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
-                    builder.build()
-                }
-            )
-        }
+        Log.d(tag, "Initializing consent form in production mode")
         
         consentInformation = activity?.let { UserMessagingPlatform.getConsentInformation(it) }
         activity?.let {
@@ -152,6 +133,9 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 params.build(),
                 {
                     // Consent info updated successfully
+                    Log.d(tag, "Consent info updated successfully")
+                    emitSignal("consent_info_update_success")
+                    
                     if (consentInformation?.isConsentFormAvailable == true) {
                         loadConsentForm()
                     }
@@ -160,6 +144,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 { error ->
                     // Consent info update failed
                     Log.e(tag, "Error updating consent info: ${error.message}")
+                    emitSignal("consent_info_update_failure", error.message ?: "Unknown error")
                 }
             )
         }
@@ -171,12 +156,16 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 it,
                 { form ->
                     consentForm = form
+                    Log.d(tag, "Consent form loaded successfully")
+                    emitSignal("consent_form_load_success")
+                    
                     if (consentInformation?.consentStatus == ConsentStatus.REQUIRED) {
                         showConsentForm()
                     }
                 },
                 { error ->
                     Log.e(tag, "Error loading consent form: ${error.message}")
+                    emitSignal("consent_form_load_failure", error.message ?: "Unknown error")
                 }
             )
         }
@@ -227,6 +216,8 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         }
     }
     
+    // Device ID testing functionality removed
+    
     @UsedByGodot
     fun resetConsentStatus() {
         runOnUiThread {
@@ -235,15 +226,7 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         }
     }
     
-    @UsedByGodot
-    fun setDebugGeography(geography: Int) {
-        runOnUiThread {
-            debugGeography = geography
-            // Reset and reinitialize consent to apply new geography setting
-            consentInformation?.reset()
-            initializeConsentForm()
-        }
-    }
+    // Debug geography functionality removed
     
     // Banner Ads
     @UsedByGodot

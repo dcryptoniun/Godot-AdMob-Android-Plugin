@@ -17,14 +17,31 @@ func _ready():
 	%ConsentStatus.text = "Consent Status: Unknown"
 	%AdStatus.text = "Ad Status: Not initialized"
 	
-	# Load settings from project settings
-	app_id = ProjectSettings.get_setting("admob/app_id", "")
-	banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
-	interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
-	rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
-	is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
-	is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
-	debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
+	# Try to load settings from configuration resource
+	var config_path = "res://addons/GodotAdMobAndroidPlugin/admob_config.tres"
+	var config_resource = null
+	
+	if FileAccess.file_exists(config_path):
+		config_resource = load(config_path) as AdmobConfigResource
+	
+	if config_resource != null:
+		# Load from resource
+		app_id = config_resource.app_id
+		banner_ad_unit_id = config_resource.banner_ad_unit_id
+		interstitial_ad_unit_id = config_resource.interstitial_ad_unit_id
+		rewarded_ad_unit_id = config_resource.rewarded_ad_unit_id
+		is_test_device = config_resource.is_test_device
+		is_real_ads = config_resource.is_real_ads
+		debug_geography = config_resource.debug_geography
+	else:
+		# Fallback to project settings
+		app_id = ProjectSettings.get_setting("admob/app_id", "")
+		banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
+		interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
+		rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
+		is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
+		is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+		debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 	
 	# Update UI with loaded settings
 	%AppIdInput.text = app_id

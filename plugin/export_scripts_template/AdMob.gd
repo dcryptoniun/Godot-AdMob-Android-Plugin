@@ -41,6 +41,10 @@ enum DebugGeography {
 # Signals
 signal consent_form_dismissed
 signal consent_status_changed(status)
+signal consent_form_load_success
+signal consent_form_load_failure(error_message)
+signal consent_info_update_success
+signal consent_info_update_failure(error_message)
 signal banner_loaded
 signal banner_failed_to_load(error_message)
 signal interstitial_loaded
@@ -63,6 +67,10 @@ var config = {
 	"is_real_ads": false,
 	"debug_geography": DebugGeography.DISABLED
 }
+
+# Configuration resource path
+var config_resource_path: String = "res://addons/admob/admob_config.tres"
+var config_resource: AdmobConfigResource = null
 
 # Auto-initialization flag
 var auto_init_with_test_ads = true
@@ -97,8 +105,18 @@ func _initialize_plugin():
 		_connect_signals()
 		print("AdMob plugin initialized successfully")
 		
-		# Check if we should load from project settings
-		if ProjectSettings.has_setting("admob/app_id"):
+		# Try to load from config resource file first
+		config_resource = _load_config_resource()
+		
+		if config_resource != null:
+			# If we have a valid config resource with real ads, use it
+			if config_resource.is_real_ads and config_resource.app_id.length() > 0:
+				initialize_with_config_resource(config_resource)
+				print("AdMob initialized with config resource")
+				return
+				
+		# Fallback to project settings for backward compatibility
+		elif ProjectSettings.has_setting("admob/app_id"):
 			# Load settings from project settings
 			var app_id = ProjectSettings.get_setting("admob/app_id", "")
 			var banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
@@ -114,7 +132,7 @@ func _initialize_plugin():
 				print("AdMob initialized with project settings")
 				return
 		
-		# Fall back to test ads if no valid project settings or not using real ads
+		# Fall back to test ads if no valid config or project settings
 		if auto_init_with_test_ads:
 			initialize_with_test_ads()
 			print("AdMob auto-initialized with test ads")
@@ -129,6 +147,14 @@ func _connect_signals():
 			_plugin.disconnect("consent_form_dismissed", _on_consent_form_dismissed)
 		if _plugin.is_connected("consent_status_changed", _on_consent_status_changed):
 			_plugin.disconnect("consent_status_changed", _on_consent_status_changed)
+		if _plugin.is_connected("consent_form_load_success", _on_consent_form_load_success):
+			_plugin.disconnect("consent_form_load_success", _on_consent_form_load_success)
+		if _plugin.is_connected("consent_form_load_failure", _on_consent_form_load_failure):
+			_plugin.disconnect("consent_form_load_failure", _on_consent_form_load_failure)
+		if _plugin.is_connected("consent_info_update_success", _on_consent_info_update_success):
+			_plugin.disconnect("consent_info_update_success", _on_consent_info_update_success)
+		if _plugin.is_connected("consent_info_update_failure", _on_consent_info_update_failure):
+			_plugin.disconnect("consent_info_update_failure", _on_consent_info_update_failure)
 		
 		if _plugin.is_connected("banner_loaded", _on_banner_loaded):
 			_plugin.disconnect("banner_loaded", _on_banner_loaded)
@@ -159,6 +185,10 @@ func _connect_signals():
 		# Consent signals
 		_plugin.connect("consent_form_dismissed", _on_consent_form_dismissed)
 		_plugin.connect("consent_status_changed", _on_consent_status_changed)
+		_plugin.connect("consent_form_load_success", _on_consent_form_load_success)
+		_plugin.connect("consent_form_load_failure", _on_consent_form_load_failure)
+		_plugin.connect("consent_info_update_success", _on_consent_info_update_success)
+		_plugin.connect("consent_info_update_failure", _on_consent_info_update_failure)
 		
 		# Banner ad signals
 		_plugin.connect("banner_loaded", _on_banner_loaded)
@@ -211,7 +241,7 @@ func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_
 		return true
 	return false
 
-## Initialize AdMob with an AdmobConfig object
+## Initialize AdMob with an AdmobConfig object (legacy support)
 ## This is a convenience method for initializing with a configuration object
 ## @param config_obj The AdmobConfig object
 func initialize_with_config(config_obj: AdmobConfig):
@@ -223,6 +253,55 @@ func initialize_with_config(config_obj: AdmobConfig):
 		config_obj.is_test_device,
 		config_obj.is_real_ads
 	)
+
+## Initialize AdMob with an AdmobConfigResource object
+## This is the recommended way to initialize with a configuration resource
+## @param resource The AdmobConfigResource object
+func initialize_with_config_resource(resource: AdmobConfigResource):
+	return initialize(
+		resource.app_id,
+		resource.banner_ad_unit_id,
+		resource.interstitial_ad_unit_id,
+		resource.rewarded_ad_unit_id,
+		resource.is_test_device,
+		resource.is_real_ads,
+		resource.debug_geography
+	)
+
+## Set the path to the configuration resource file
+## @param path The path to the configuration resource file
+func set_config_resource_path(path: String):
+	config_resource_path = path
+	
+## Load the configuration resource from the specified path
+## @return The loaded AdmobConfigResource or null if not found
+func _load_config_resource() -> AdmobConfigResource:
+	if FileAccess.file_exists(config_resource_path):
+		var resource = load(config_resource_path)
+		if resource is AdmobConfigResource:
+			return resource
+	return null
+	
+## Save the current configuration to a resource file
+## @param path Optional path to save to (uses config_resource_path if not specified)
+## @return True if saved successfully
+func save_config_to_resource(path: String = "") -> bool:
+	if path.is_empty():
+		path = config_resource_path
+		
+	# Create a new resource with current config
+	var resource = AdmobConfigResource.new(
+		config.app_id,
+		config.banner_ad_unit_id,
+		config.interstitial_ad_unit_id,
+		config.rewarded_ad_unit_id,
+		config.is_test_device,
+		config.is_real_ads,
+		config.debug_geography
+	)
+	
+	# Save the resource
+	return resource.save_to_file(path)
 
 ## Initialize AdMob with test ads
 ## This is the simplest way to get started with test ads
@@ -250,6 +329,13 @@ func reset_consent_status():
 		_plugin.resetConsentStatus()
 		return true
 	return false
+
+## Get the device ID for testing purposes
+## @return The hashed device ID for testing
+func get_device_id_for_testing() -> String:
+	if _plugin:
+		return _plugin.getDeviceIdForTesting()
+	return ""
 
 # Banner Ads
 
@@ -408,6 +494,18 @@ func _on_consent_form_dismissed():
 
 func _on_consent_status_changed(status):
 	emit_signal("consent_status_changed", status)
+
+func _on_consent_form_load_success():
+	emit_signal("consent_form_load_success")
+
+func _on_consent_form_load_failure(error_message):
+	emit_signal("consent_form_load_failure", error_message)
+
+func _on_consent_info_update_success():
+	emit_signal("consent_info_update_success")
+
+func _on_consent_info_update_failure(error_message):
+	emit_signal("consent_info_update_failure", error_message)
 
 # Banner ad signals
 func _on_banner_loaded():

@@ -12,9 +12,13 @@ const SETTINGS_APP_ID = "admob/app_id"
 const SETTINGS_BANNER_AD_UNIT_ID = "admob/banner_ad_unit_id"
 const SETTINGS_INTERSTITIAL_AD_UNIT_ID = "admob/interstitial_ad_unit_id"
 const SETTINGS_REWARDED_AD_UNIT_ID = "admob/rewarded_ad_unit_id"
-const SETTINGS_IS_TEST_DEVICE = "admob/is_test_device"
 const SETTINGS_IS_REAL_ADS = "admob/is_real_ads"
-const SETTINGS_DEBUG_GEOGRAPHY = "admob/debug_geography"
+
+# Configuration resource path
+const CONFIG_RESOURCE_PATH = "res://addons/GodotAdMobAndroidPlugin/admob_config.tres"
+
+# Configuration resource
+var config_resource = null
 
 # UI elements
 var dock_scene: Control
@@ -22,9 +26,7 @@ var app_id_input: LineEdit
 var banner_ad_unit_id_input: LineEdit
 var interstitial_ad_unit_id_input: LineEdit
 var rewarded_ad_unit_id_input: LineEdit
-var test_device_checkbox: CheckBox
 var real_ads_checkbox: CheckBox
-var debug_geo_option: OptionButton
 var save_button: Button
 var reset_button: Button
 
@@ -38,8 +40,11 @@ func _enter_tree():
 	# Add the dock to the editor
 	add_control_to_bottom_panel(dock_scene, "AdMob Config")
 	
-	# Register project settings if they don't exist
+	# Register project settings if they don't exist (for backward compatibility)
 	_register_project_settings()
+	
+	# Initialize configuration resource
+	_initialize_config_resource()
 	
 	# Load settings into UI
 	_load_settings()
@@ -177,30 +182,11 @@ func _create_dock() -> Control:
 	spacing.custom_minimum_size = Vector2(0, 10)
 	right_column.add_child(spacing)
 	
-	# Test Device Checkbox
-	test_device_checkbox = CheckBox.new()
-	test_device_checkbox.text = "Test Device"
-	test_device_checkbox.button_pressed = true
-	right_column.add_child(test_device_checkbox)
-	
 	# Real Ads Checkbox
 	real_ads_checkbox = CheckBox.new()
 	real_ads_checkbox.text = "Use Real Ads"
 	real_ads_checkbox.button_pressed = false
 	right_column.add_child(real_ads_checkbox)
-	
-	# Debug Geography Option
-	var debug_geo_label = Label.new()
-	debug_geo_label.text = "Debug Geography:"
-	right_column.add_child(debug_geo_label)
-	
-	debug_geo_option = OptionButton.new()
-	debug_geo_option.add_item("Disabled", 0)
-	debug_geo_option.add_item("EEA", 1)
-	debug_geo_option.add_item("Not EEA", 2)
-	debug_geo_option.select(0)
-	debug_geo_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_column.add_child(debug_geo_option)
 	
 	# Buttons container
 	var buttons_container = HBoxContainer.new()
@@ -275,17 +261,6 @@ func _register_project_settings():
 			"hint_string": ""
 		})
 	
-	# Is Test Device
-	if not ProjectSettings.has_setting(SETTINGS_IS_TEST_DEVICE):
-		ProjectSettings.set_setting(SETTINGS_IS_TEST_DEVICE, true)
-		ProjectSettings.set_initial_value(SETTINGS_IS_TEST_DEVICE, true)
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_IS_TEST_DEVICE,
-			"type": TYPE_BOOL,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
 	# Is Real Ads
 	if not ProjectSettings.has_setting(SETTINGS_IS_REAL_ADS):
 		ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, false)
@@ -297,47 +272,58 @@ func _register_project_settings():
 			"hint_string": ""
 		})
 	
-	# Debug Geography
-	if not ProjectSettings.has_setting(SETTINGS_DEBUG_GEOGRAPHY):
-		ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
-		ProjectSettings.set_initial_value(SETTINGS_DEBUG_GEOGRAPHY, 0)
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_DEBUG_GEOGRAPHY,
-			"type": TYPE_INT,
-			"hint": PROPERTY_HINT_ENUM,
-			"hint_string": "Disabled,EEA,Not EEA"
-		})
-	
 	# Save the project settings
 	ProjectSettings.save()
 
-# Load settings from project settings into UI
+# Load settings from configuration resource into UI
 func _load_settings():
-	app_id_input.text = ProjectSettings.get_setting(SETTINGS_APP_ID, "")
-	banner_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
-	interstitial_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
-	rewarded_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
-	test_device_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_TEST_DEVICE, true)
-	real_ads_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
-	debug_geo_option.selected = ProjectSettings.get_setting(SETTINGS_DEBUG_GEOGRAPHY, 0)
+	if config_resource != null:
+		# Load from resource
+		app_id_input.text = config_resource.app_id
+		banner_ad_unit_id_input.text = config_resource.banner_ad_unit_id
+		interstitial_ad_unit_id_input.text = config_resource.interstitial_ad_unit_id
+		rewarded_ad_unit_id_input.text = config_resource.rewarded_ad_unit_id
+		real_ads_checkbox.button_pressed = config_resource.is_real_ads
+	else:
+		# Fallback to project settings for backward compatibility
+		app_id_input.text = ProjectSettings.get_setting(SETTINGS_APP_ID, "")
+		banner_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
+		interstitial_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
+		rewarded_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
+		real_ads_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
 
-# Save settings from UI to project settings
+# Save settings from UI to configuration resource
 func _save_settings():
+	# Create or update configuration resource
+	if config_resource == null:
+		config_resource = AdmobConfigResource.new()
+	
+	# Update resource with UI values
+	config_resource.app_id = app_id_input.text
+	config_resource.banner_ad_unit_id = banner_ad_unit_id_input.text
+	config_resource.interstitial_ad_unit_id = interstitial_ad_unit_id_input.text
+	config_resource.rewarded_ad_unit_id = rewarded_ad_unit_id_input.text
+	config_resource.is_real_ads = real_ads_checkbox.button_pressed
+	
+	# Save to resource file
+	var dir = DirAccess.open("res://")
+	if not dir.dir_exists("res://addons/GodotAdMobAndroidPlugin"):
+		dir.make_dir_recursive("res://addons/GodotAdMobAndroidPlugin")
+	
+	var save_result = config_resource.save_to_file(CONFIG_RESOURCE_PATH)
+	
+	# Also save to project settings for backward compatibility
 	ProjectSettings.set_setting(SETTINGS_APP_ID, app_id_input.text)
 	ProjectSettings.set_setting(SETTINGS_BANNER_AD_UNIT_ID, banner_ad_unit_id_input.text)
 	ProjectSettings.set_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, interstitial_ad_unit_id_input.text)
 	ProjectSettings.set_setting(SETTINGS_REWARDED_AD_UNIT_ID, rewarded_ad_unit_id_input.text)
-	ProjectSettings.set_setting(SETTINGS_IS_TEST_DEVICE, test_device_checkbox.button_pressed)
 	ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, real_ads_checkbox.button_pressed)
-	ProjectSettings.set_setting(SETTINGS_DEBUG_GEOGRAPHY, debug_geo_option.selected)
-	
-	# Save the project settings
 	ProjectSettings.save()
 	
 	# Show a confirmation message
 	var accept_dialog = AcceptDialog.new()
 	accept_dialog.title = "AdMob Settings"
-	accept_dialog.dialog_text = "AdMob settings saved successfully!"
+	accept_dialog.dialog_text = "AdMob settings saved successfully!" + ("" if save_result else "\n(Warning: Could not save resource file)")
 	accept_dialog.size = Vector2(300, 100)
 	add_child(accept_dialog)
 	accept_dialog.popup_centered()
@@ -354,17 +340,44 @@ func _on_save_button_pressed():
 
 # Reset settings to defaults
 func _on_reset_button_pressed():
-	# Reset to default values
-	app_id_input.text = ""
-	banner_ad_unit_id_input.text = ""
-	interstitial_ad_unit_id_input.text = ""
-	rewarded_ad_unit_id_input.text = ""
-	test_device_checkbox.button_pressed = true
+	# Reset to test ad IDs instead of empty values
+	app_id_input.text = AdmobConfigResource.TEST_APP_ID
+	banner_ad_unit_id_input.text = AdmobConfigResource.TEST_BANNER_AD_UNIT_ID
+	interstitial_ad_unit_id_input.text = AdmobConfigResource.TEST_INTERSTITIAL_AD_UNIT_ID
+	rewarded_ad_unit_id_input.text = AdmobConfigResource.TEST_REWARDED_AD_UNIT_ID
 	real_ads_checkbox.button_pressed = false
-	debug_geo_option.select(0)
 	
 	# Save the reset settings
 	_save_settings()
+	
+	# Show a confirmation message
+	var accept_dialog = AcceptDialog.new()
+	accept_dialog.title = "AdMob Settings"
+	accept_dialog.dialog_text = "AdMob settings reset to test IDs successfully!"
+	accept_dialog.size = Vector2(300, 100)
+	add_child(accept_dialog)
+	accept_dialog.popup_centered()
+	accept_dialog.confirmed.connect(func(): accept_dialog.queue_free())
+
+# Initialize the configuration resource
+func _initialize_config_resource():
+	# Try to load existing resource
+	if FileAccess.file_exists(CONFIG_RESOURCE_PATH):
+		var resource = load(CONFIG_RESOURCE_PATH)
+		if resource is AdmobConfigResource:
+			config_resource = resource
+			return
+	
+	# If no resource exists, create a new one
+	config_resource = AdmobConfigResource.new()
+	
+	# Try to import values from project settings if they exist
+	if ProjectSettings.has_setting(SETTINGS_APP_ID):
+		config_resource.app_id = ProjectSettings.get_setting(SETTINGS_APP_ID, "")
+		config_resource.banner_ad_unit_id = ProjectSettings.get_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
+		config_resource.interstitial_ad_unit_id = ProjectSettings.get_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
+		config_resource.rewarded_ad_unit_id = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
+		config_resource.is_real_ads = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
 
 # Android Export Plugin class
 class AndroidExportPlugin extends EditorExportPlugin:
@@ -393,3 +406,33 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 	func _get_name():
 		return _plugin_name
+		
+	# Override this method to inject the AdMob app ID into the project's AndroidManifest.xml
+	func _get_android_manifest_xml_features(platform, debug):
+		# Get the app ID from the configuration resource or project settings
+		var app_id = ""
+		
+		# Try to load from config resource file first
+		if FileAccess.file_exists(CONFIG_RESOURCE_PATH):
+			var resource = load(CONFIG_RESOURCE_PATH)
+			if resource and resource.get("app_id"):
+				app_id = resource.get("app_id")
+		
+		# Fallback to project settings if no valid resource or empty app ID
+		if app_id.is_empty() and ProjectSettings.has_setting("admob/app_id"):
+			app_id = ProjectSettings.get_setting("admob/app_id", "")
+		
+		# Use test app ID if no valid app ID is found or if not using real ads
+		var is_real_ads = false
+		if FileAccess.file_exists(CONFIG_RESOURCE_PATH):
+			var resource = load(CONFIG_RESOURCE_PATH)
+			if resource and resource.get("is_real_ads") != null:
+				is_real_ads = resource.get("is_real_ads")
+		elif ProjectSettings.has_setting("admob/is_real_ads"):
+			is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+		
+		if not is_real_ads or app_id.is_empty():
+			app_id = "ca-app-pub-3940256099942544~3347511713" # Test app ID
+		
+		# Add the AdMob app ID to the manifest
+		return "<meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + app_id + "\" />"

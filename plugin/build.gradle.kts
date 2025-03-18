@@ -24,6 +24,7 @@ android {
 
         manifestPlaceholders["godotPluginName"] = pluginName
         manifestPlaceholders["godotPluginPackageName"] = pluginPackageName
+        manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713" // Default test app ID
         buildConfigField("String", "GODOT_PLUGIN_NAME", "\"${pluginName}\"")
         setProperty("archivesBaseName", pluginName)
     }

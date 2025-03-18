@@ -20,10 +20,10 @@
             android:name="org.godotengine.plugin.v2.${godotPluginName}"
             android:value="${godotPluginPackageName}.GodotAndroidPlugin"/>
             
-        <!-- AdMob app ID -->
+        <!-- AdMob app ID - This is a placeholder that will be replaced with the actual app ID at runtime -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-0000000000000000~0000000000" />
+            android:value="${admobAppId}" />
     </application>
 
 </manifest>
