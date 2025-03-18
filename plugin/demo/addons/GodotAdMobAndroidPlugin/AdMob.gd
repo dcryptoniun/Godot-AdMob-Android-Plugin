@@ -115,7 +115,7 @@ func _initialize_plugin():
 				print("AdMob initialized with config resource")
 				return
 		
-		# Fall back to test ads if no valid config
+		
 		if auto_init_with_test_ads:
 			initialize_with_test_ads()
 			print("AdMob auto-initialized with test ads")

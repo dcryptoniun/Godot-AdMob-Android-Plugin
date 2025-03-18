@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AdmobConfigResource" load_steps=2 format=3 uid="uid://c77evf05icyhy"]
 
-[ext_resource type="Script" uid="uid://uc67us0tfwpe" path="res://addons/GodotAdMobAndroidPlugin/AdmobConfigResource.gd" id="1_hjo38"]
+[ext_resource type="Script" uid="uid://c2nd454fgf0yg" path="res://addons/GodotAdMobAndroidPlugin/AdmobConfigResource.gd" id="1_hjo38"]
 
 [resource]
 script = ExtResource("1_hjo38")

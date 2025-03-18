@@ -22,13 +22,20 @@ These settings will be automatically loaded when your game starts.
 You can also configure AdMob programmatically in your code, as demonstrated in this demo:
 
 ```gdscript
-# Load settings from project settings
-app_id = ProjectSettings.get_setting("admob/app_id", "")
-banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
-interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
-rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
-is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
-is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
+# Load settings from configuration resource
+var config_path = "res://addons/GodotAdMobAndroidPlugin/admob_config.tres"
+var config_resource = null
+
+if FileAccess.file_exists(config_path):
+	config_resource = load(config_path) as AdmobConfigResource
+
+if config_resource != null:
+	# Load from resource
+	app_id = config_resource.app_id
+	banner_ad_unit_id = config_resource.banner_ad_unit_id
+	interstitial_ad_unit_id = config_resource.interstitial_ad_unit_id
+	rewarded_ad_unit_id = config_resource.rewarded_ad_unit_id
+	is_real_ads = config_resource.is_real_ads
 
 # Initialize AdMob with these settings
 admob.initialize(

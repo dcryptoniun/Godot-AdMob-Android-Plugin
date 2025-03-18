@@ -226,7 +226,6 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         }
     }
     
-    // Debug geography functionality removed
     
     // Banner Ads
     @UsedByGodot

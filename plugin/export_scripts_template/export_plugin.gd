@@ -45,6 +45,9 @@ func _enter_tree():
 	
 	# Load settings into UI
 	_load_settings()
+	
+	# Register AdMob as an autoload singleton
+	add_autoload_singleton("AdMob", "res://addons/GodotAdMobAndroidPlugin/AdMob.gd")
 
 
 func _exit_tree():
@@ -56,6 +59,9 @@ func _exit_tree():
 	if dock_scene:
 		remove_control_from_bottom_panel(dock_scene)
 		dock_scene.queue_free()
+	
+	# Remove the autoload singleton
+	remove_autoload_singleton("AdMob")
 
 
 # Create the dock UI
