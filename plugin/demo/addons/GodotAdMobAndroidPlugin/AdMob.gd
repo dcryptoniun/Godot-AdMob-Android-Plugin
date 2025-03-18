@@ -31,11 +31,13 @@ enum ConsentStatus {
 	OBTAINED
 }
 
-# Debug geography for consent testing
-enum DebugGeography {
-	DISABLED,
-	EEA,
-	OTHER
+# Consent form load status
+enum ConsentFormLoadStatus {
+	UNKNOWN,
+	LOADING,
+	LOADED,
+	FAILED_TO_LOAD,
+	NOT_AVAILABLE
 }
 
 # Signals
@@ -63,9 +65,7 @@ var config = {
 	"banner_ad_unit_id": "",
 	"interstitial_ad_unit_id": "",
 	"rewarded_ad_unit_id": "",
-	"is_test_device": true,
-	"is_real_ads": false,
-	"debug_geography": DebugGeography.DISABLED
+	"is_real_ads": false
 }
 
 # Configuration resource path
@@ -105,7 +105,7 @@ func _initialize_plugin():
 		_connect_signals()
 		print("AdMob plugin initialized successfully")
 		
-		# Try to load from config resource file first
+		# Try to load from config resource file
 		config_resource = _load_config_resource()
 		
 		if config_resource != null:
@@ -114,25 +114,8 @@ func _initialize_plugin():
 				initialize_with_config_resource(config_resource)
 				print("AdMob initialized with config resource")
 				return
-				
-		# Fallback to project settings for backward compatibility
-		elif ProjectSettings.has_setting("admob/app_id"):
-			# Load settings from project settings
-			var app_id = ProjectSettings.get_setting("admob/app_id", "")
-			var banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
-			var interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
-			var rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
-			var is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
-			var is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
-			var debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
-			
-			# If we have valid settings, use them
-			if is_real_ads and app_id.length() > 0:
-				initialize(app_id, banner_ad_unit_id, interstitial_ad_unit_id, rewarded_ad_unit_id, is_test_device, is_real_ads, debug_geography)
-				print("AdMob initialized with project settings")
-				return
 		
-		# Fall back to test ads if no valid config or project settings
+		# Fall back to test ads if no valid config
 		if auto_init_with_test_ads:
 			initialize_with_test_ads()
 			print("AdMob auto-initialized with test ads")
@@ -212,20 +195,15 @@ func _connect_signals():
 ## @param banner_ad_unit_id The banner ad unit ID
 ## @param interstitial_ad_unit_id The interstitial ad unit ID
 ## @param rewarded_ad_unit_id The rewarded ad unit ID
-## @param is_test_device Whether to use test device
 ## @param is_real_ads Whether to use real ads
-## @param debug_geography The debug geography setting for consent testing (0: Disabled, 1: EEA, 2: Not EEA)
 func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_id = "", 
-				p_rewarded_ad_unit_id = "", p_is_test_device = true, p_is_real_ads = false,
-				p_debug_geography = DebugGeography.DISABLED):
+				p_rewarded_ad_unit_id = "", p_is_real_ads = false):
 	# Update configuration
 	config.app_id = p_app_id
 	config.banner_ad_unit_id = p_banner_ad_unit_id
 	config.interstitial_ad_unit_id = p_interstitial_ad_unit_id
 	config.rewarded_ad_unit_id = p_rewarded_ad_unit_id
-	config.is_test_device = p_is_test_device
 	config.is_real_ads = p_is_real_ads
-	config.debug_geography = p_debug_geography
 	
 	# Initialize plugin
 	if _plugin:
@@ -248,7 +226,6 @@ func initialize_with_config(config_obj: AdmobConfig):
 		config_obj.banner_ad_unit_id,
 		config_obj.interstitial_ad_unit_id,
 		config_obj.rewarded_ad_unit_id,
-		config_obj.is_test_device,
 		config_obj.is_real_ads
 	)
 
@@ -261,9 +238,7 @@ func initialize_with_config_resource(resource: AdmobConfigResource):
 		resource.banner_ad_unit_id,
 		resource.interstitial_ad_unit_id,
 		resource.rewarded_ad_unit_id,
-		resource.is_test_device,
-		resource.is_real_ads,
-		resource.debug_geography
+		resource.is_real_ads
 	)
 
 ## Set the path to the configuration resource file
@@ -293,9 +268,7 @@ func save_config_to_resource(path: String = "") -> bool:
 		config.banner_ad_unit_id,
 		config.interstitial_ad_unit_id,
 		config.rewarded_ad_unit_id,
-		config.is_test_device,
-		config.is_real_ads,
-		config.debug_geography
+		config.is_real_ads
 	)
 	
 	# Save the resource
@@ -304,7 +277,7 @@ func save_config_to_resource(path: String = "") -> bool:
 ## Initialize AdMob with test ads
 ## This is the simplest way to get started with test ads
 func initialize_with_test_ads():
-	return initialize(TEST_APP_ID, TEST_BANNER_AD_UNIT_ID, TEST_INTERSTITIAL_AD_UNIT_ID, TEST_REWARDED_AD_UNIT_ID, true, false)
+	return initialize(TEST_APP_ID, TEST_BANNER_AD_UNIT_ID, TEST_INTERSTITIAL_AD_UNIT_ID, TEST_REWARDED_AD_UNIT_ID, false)
 
 # Consent Management
 

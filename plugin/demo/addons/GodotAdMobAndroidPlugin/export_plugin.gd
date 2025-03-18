@@ -40,9 +40,6 @@ func _enter_tree():
 	# Add the dock to the editor
 	add_control_to_bottom_panel(dock_scene, "AdMob Config")
 	
-	# Register project settings if they don't exist (for backward compatibility)
-	_register_project_settings()
-	
 	# Initialize configuration resource
 	_initialize_config_resource()
 	
@@ -215,65 +212,7 @@ func _create_dock() -> Control:
 	
 	return dock
 
-# Register project settings if they don't exist
-func _register_project_settings():
-	# App ID
-	if not ProjectSettings.has_setting(SETTINGS_APP_ID):
-		ProjectSettings.set_setting(SETTINGS_APP_ID, "")
-		ProjectSettings.set_initial_value(SETTINGS_APP_ID, "")
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_APP_ID,
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
-	# Banner Ad Unit ID
-	if not ProjectSettings.has_setting(SETTINGS_BANNER_AD_UNIT_ID):
-		ProjectSettings.set_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
-		ProjectSettings.set_initial_value(SETTINGS_BANNER_AD_UNIT_ID, "")
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_BANNER_AD_UNIT_ID,
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
-	# Interstitial Ad Unit ID
-	if not ProjectSettings.has_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID):
-		ProjectSettings.set_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
-		ProjectSettings.set_initial_value(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_INTERSTITIAL_AD_UNIT_ID,
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
-	# Rewarded Ad Unit ID
-	if not ProjectSettings.has_setting(SETTINGS_REWARDED_AD_UNIT_ID):
-		ProjectSettings.set_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
-		ProjectSettings.set_initial_value(SETTINGS_REWARDED_AD_UNIT_ID, "")
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_REWARDED_AD_UNIT_ID,
-			"type": TYPE_STRING,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
-	# Is Real Ads
-	if not ProjectSettings.has_setting(SETTINGS_IS_REAL_ADS):
-		ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, false)
-		ProjectSettings.set_initial_value(SETTINGS_IS_REAL_ADS, false)
-		ProjectSettings.add_property_info({
-			"name": SETTINGS_IS_REAL_ADS,
-			"type": TYPE_BOOL,
-			"hint": PROPERTY_HINT_NONE,
-			"hint_string": ""
-		})
-	
-	# Save the project settings
-	ProjectSettings.save()
+# This method has been removed as we no longer use ProjectSettings
 
 # Load settings from configuration resource into UI
 func _load_settings():
@@ -285,12 +224,12 @@ func _load_settings():
 		rewarded_ad_unit_id_input.text = config_resource.rewarded_ad_unit_id
 		real_ads_checkbox.button_pressed = config_resource.is_real_ads
 	else:
-		# Fallback to project settings for backward compatibility
-		app_id_input.text = ProjectSettings.get_setting(SETTINGS_APP_ID, "")
-		banner_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
-		interstitial_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
-		rewarded_ad_unit_id_input.text = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
-		real_ads_checkbox.button_pressed = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
+		# Initialize with empty values
+		app_id_input.text = ""
+		banner_ad_unit_id_input.text = ""
+		interstitial_ad_unit_id_input.text = ""
+		rewarded_ad_unit_id_input.text = ""
+		real_ads_checkbox.button_pressed = false
 
 # Save settings from UI to configuration resource
 func _save_settings():
@@ -311,14 +250,6 @@ func _save_settings():
 		dir.make_dir_recursive("res://addons/GodotAdMobAndroidPlugin")
 	
 	var save_result = config_resource.save_to_file(CONFIG_RESOURCE_PATH)
-	
-	# Also save to project settings for backward compatibility
-	ProjectSettings.set_setting(SETTINGS_APP_ID, app_id_input.text)
-	ProjectSettings.set_setting(SETTINGS_BANNER_AD_UNIT_ID, banner_ad_unit_id_input.text)
-	ProjectSettings.set_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, interstitial_ad_unit_id_input.text)
-	ProjectSettings.set_setting(SETTINGS_REWARDED_AD_UNIT_ID, rewarded_ad_unit_id_input.text)
-	ProjectSettings.set_setting(SETTINGS_IS_REAL_ADS, real_ads_checkbox.button_pressed)
-	ProjectSettings.save()
 	
 	# Show a confirmation message
 	var accept_dialog = AcceptDialog.new()
@@ -368,16 +299,8 @@ func _initialize_config_resource():
 			config_resource = resource
 			return
 	
-	# If no resource exists, create a new one
+	# If no resource exists, create a new one with default values
 	config_resource = AdmobConfigResource.new()
-	
-	# Try to import values from project settings if they exist
-	if ProjectSettings.has_setting(SETTINGS_APP_ID):
-		config_resource.app_id = ProjectSettings.get_setting(SETTINGS_APP_ID, "")
-		config_resource.banner_ad_unit_id = ProjectSettings.get_setting(SETTINGS_BANNER_AD_UNIT_ID, "")
-		config_resource.interstitial_ad_unit_id = ProjectSettings.get_setting(SETTINGS_INTERSTITIAL_AD_UNIT_ID, "")
-		config_resource.rewarded_ad_unit_id = ProjectSettings.get_setting(SETTINGS_REWARDED_AD_UNIT_ID, "")
-		config_resource.is_real_ads = ProjectSettings.get_setting(SETTINGS_IS_REAL_ADS, false)
 
 # Android Export Plugin class
 class AndroidExportPlugin extends EditorExportPlugin:
@@ -409,18 +332,14 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		
 	# Override this method to inject the AdMob app ID into the project's AndroidManifest.xml
 	func _get_android_manifest_xml_features(platform, debug):
-		# Get the app ID from the configuration resource or project settings
+		# Get the app ID from the configuration resource
 		var app_id = ""
 		
-		# Try to load from config resource file first
+		# Try to load from config resource file
 		if FileAccess.file_exists(CONFIG_RESOURCE_PATH):
 			var resource = load(CONFIG_RESOURCE_PATH)
 			if resource and resource.get("app_id"):
 				app_id = resource.get("app_id")
-		
-		# Fallback to project settings if no valid resource or empty app ID
-		if app_id.is_empty() and ProjectSettings.has_setting("admob/app_id"):
-			app_id = ProjectSettings.get_setting("admob/app_id", "")
 		
 		# Use test app ID if no valid app ID is found or if not using real ads
 		var is_real_ads = false
@@ -428,8 +347,6 @@ class AndroidExportPlugin extends EditorExportPlugin:
 			var resource = load(CONFIG_RESOURCE_PATH)
 			if resource and resource.get("is_real_ads") != null:
 				is_real_ads = resource.get("is_real_ads")
-		elif ProjectSettings.has_setting("admob/is_real_ads"):
-			is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
 		
 		if not is_real_ads or app_id.is_empty():
 			app_id = "ca-app-pub-3940256099942544~3347511713" # Test app ID

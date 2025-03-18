@@ -3,14 +3,13 @@ extends Node2D
 # AdMob reference
 var admob
 
-# Ad configuration - will be loaded from project settings
+# Ad configuration - will be loaded from configuration resource
 var app_id = ""
 var banner_ad_unit_id = ""
 var interstitial_ad_unit_id = ""
 var rewarded_ad_unit_id = ""
-var is_test_device = true
+
 var is_real_ads = false
-var debug_geography = 0
 
 func _ready():
 	# Initialize UI elements
@@ -30,25 +29,13 @@ func _ready():
 		banner_ad_unit_id = config_resource.banner_ad_unit_id
 		interstitial_ad_unit_id = config_resource.interstitial_ad_unit_id
 		rewarded_ad_unit_id = config_resource.rewarded_ad_unit_id
-		is_test_device = config_resource.is_test_device
 		is_real_ads = config_resource.is_real_ads
-		debug_geography = config_resource.debug_geography
-	else:
-		# Fallback to project settings
-		app_id = ProjectSettings.get_setting("admob/app_id", "")
-		banner_ad_unit_id = ProjectSettings.get_setting("admob/banner_ad_unit_id", "")
-		interstitial_ad_unit_id = ProjectSettings.get_setting("admob/interstitial_ad_unit_id", "")
-		rewarded_ad_unit_id = ProjectSettings.get_setting("admob/rewarded_ad_unit_id", "")
-		is_test_device = ProjectSettings.get_setting("admob/is_test_device", true)
-		is_real_ads = ProjectSettings.get_setting("admob/is_real_ads", false)
-		debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 	
 	# Update UI with loaded settings
 	%AppIdInput.text = app_id
 	%BannerAdUnitIdInput.text = banner_ad_unit_id
 	%InterstitialAdUnitIdInput.text = interstitial_ad_unit_id
 	%RewardedAdUnitIdInput.text = rewarded_ad_unit_id
-	%TestDeviceCheckbox.button_pressed = is_test_device
 	%RealAdsCheckbox.button_pressed = is_real_ads
 	
 	# Initialize AdMob
@@ -95,9 +82,7 @@ func _initialize_admob():
 			banner_ad_unit_id,
 			interstitial_ad_unit_id,
 			rewarded_ad_unit_id,
-			is_test_device,
-			is_real_ads,
-			debug_geography
+			is_real_ads
 		)
 		%AdStatus.text = "Ad Status: Initialized"
 
@@ -108,10 +93,7 @@ func _on_initialize_button_pressed():
 	banner_ad_unit_id = %BannerAdUnitIdInput.text
 	interstitial_ad_unit_id = %InterstitialAdUnitIdInput.text
 	rewarded_ad_unit_id = %RewardedAdUnitIdInput.text
-	is_test_device = %TestDeviceCheckbox.button_pressed
 	is_real_ads = %RealAdsCheckbox.button_pressed
-	# Keep debug_geography from project settings
-	debug_geography = ProjectSettings.get_setting("admob/debug_geography", 0)
 	
 	# Re-initialize AdMob
 	_initialize_admob()
