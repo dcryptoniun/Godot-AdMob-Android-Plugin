@@ -38,7 +38,7 @@ if config_resource != null:
 	is_real_ads = config_resource.is_real_ads
 
 # Initialize AdMob with these settings
-admob.initialize(
+AdMob.initialize(
 	app_id,
 	banner_ad_unit_id,
 	interstitial_ad_unit_id,
@@ -72,3 +72,13 @@ This demo shows how to:
 - For real ads, you need to provide valid AdMob IDs and enable "Use Real Ads"
 - Make sure to implement proper consent management for your target regions
 - The AdMob Config panel makes it easy to manage settings across your entire project
+
+## Support the Project
+
+If you find this plugin useful, please consider supporting its development:
+
+### GitHub Sponsors
+<iframe src="https://github.com/sponsors/dcryptoniun/button" title="Sponsor dcryptoniun" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+
+### Buy Me A Coffee
+<a href="https://www.buymeacoffee.com/MayankMeena" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
