@@ -184,17 +184,15 @@ Contributions are welcome! Here's how you can contribute:
 - **No ads showing**: Make sure you have the correct Ad Unit IDs and that your device is connected to the internet
 - **Plugin not loading**: Ensure the plugin is enabled in Project Settings → Plugins
 - **Build errors**: Make sure you have installed the Android Build Template and have the correct JDK version
-- **Test ads not showing**: Add your device as a test device using `AdMob.get_device_id_for_testing()`
+- **Test ads not showing**: Add your device as a test device using Admob Website dashboard
 
 ## Support the Project
 
 If you find this plugin useful, please consider supporting its development:
 
-### GitHub Sponsors
-<iframe src="https://github.com/sponsors/dcryptoniun/button" title="Sponsor dcryptoniun" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/dcryptoniun)      <a href="https://www.buymeacoffee.com/MayankMeena" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 109px !important;" ></a>
 
-### Buy Me A Coffee
-<a href="https://www.buymeacoffee.com/MayankMeena" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 
 ## License
 
