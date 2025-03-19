@@ -77,8 +77,4 @@ This demo shows how to:
 
 If you find this plugin useful, please consider supporting its development:
 
-### GitHub Sponsors
-<iframe src="https://github.com/sponsors/dcryptoniun/button" title="Sponsor dcryptoniun" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
-
-### Buy Me A Coffee
-<a href="https://www.buymeacoffee.com/MayankMeena" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/dcryptoniun)      <a href="https://www.buymeacoffee.com/MayankMeena" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 109px !important;" ></a>
