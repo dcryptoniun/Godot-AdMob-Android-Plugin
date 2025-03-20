@@ -66,19 +66,7 @@ func _initialize_admob():
 			)
 		%AdStatus.text = "Ad Status: Initialized"
 
-# UI Button handlers
-func _on_initialize_button_pressed():
-	# Update configuration from UI
-	config.app_id = %AppIdInput.text
-	config.banner_ad_unit_id = %BannerAdUnitIdInput.text
-	config.interstitial_ad_unit_id = %InterstitialAdUnitIdInput.text
-	config.rewarded_ad_unit_id = %RewardedAdUnitIdInput.text
-	
-	# Save configuration
-	config.save_to_file("res://addons/GodotAdMobAndroidPlugin/admob_config.tres")
-	
-	# Re-initialize AdMob
-	_initialize_admob()
+
 
 # Consent management
 func _on_show_consent_form_button_pressed():

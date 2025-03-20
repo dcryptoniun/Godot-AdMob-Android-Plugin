@@ -73,61 +73,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
 
-[node name="InitializationSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="SectionTitle" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Initialization"
-
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-
-[node name="AppIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-text = "App ID:"
-
-[node name="AppIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "ca-app-pub-3940256099942544~3347511713"
-placeholder_text = "Enter App ID"
-
-[node name="BannerAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-text = "Banner Ad Unit ID:"
-
-[node name="BannerAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "ca-app-pub-3940256099942544/6300978111"
-placeholder_text = "Enter Banner Ad Unit ID"
-
-[node name="InterstitialAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-text = "Interstitial Ad Unit ID:"
-
-[node name="InterstitialAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "ca-app-pub-3940256099942544/1033173712"
-placeholder_text = "Enter Interstitial Ad Unit ID"
-
-[node name="RewardedAdUnitIdLabel" type="Label" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-text = "Rewarded Ad Unit ID:"
-
-[node name="RewardedAdUnitIdInput" type="LineEdit" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "ca-app-pub-3940256099942544/5224354917"
-placeholder_text = "Enter Rewarded Ad Unit ID"
-
-[node name="InitializeButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-layout_mode = 2
-text = "Initialize AdMob"
-
 [node name="ConsentSection" type="VBoxContainer" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -242,7 +187,6 @@ text = "Load Rewarded Ad"
 layout_mode = 2
 text = "Show Rewarded Ad"
 
-[connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection/InitializeButton" to="." method="_on_initialize_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/ConsentSection/ShowConsentFormButton" to="." method="_on_show_consent_form_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/BannerSection/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
