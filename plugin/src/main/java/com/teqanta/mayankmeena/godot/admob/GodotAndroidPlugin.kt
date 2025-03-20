@@ -72,13 +72,16 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 this.interstitialAdUnitId = interstitialAdUnitId
                 this.rewardedAdUnitId = rewardedAdUnitId
                 
-                // Set up Mobile Ads SDK
-                MobileAds.initialize(activity!!) {}
-                
-                // Request consent information if needed
-                initializeConsentForm()
-                
-                Log.d(tag, "AdMob plugin initialized with app ID: $appId")
+                // Initialize consent form first and wait for consent before initializing ads
+                initializeConsentForm { consentObtained ->
+                    if (consentObtained) {
+                        // Set up Mobile Ads SDK only after consent is obtained
+                        MobileAds.initialize(activity!!) {}
+                        Log.d(tag, "AdMob plugin initialized with app ID: $appId")
+                    } else {
+                        Log.d(tag, "Waiting for user consent before initializing AdMob")
+                    }
+                }
             } catch (e: Exception) {
                 Log.e(tag, "Error initializing AdMob: ${e.message}")
             }
@@ -97,55 +100,78 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     }
     
     // Consent Management for EU users
-    private fun initializeConsentForm() {
+    private fun initializeConsentForm(callback: (Boolean) -> Unit = {}) {
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
             .build()
         
         consentInformation = activity?.let { UserMessagingPlatform.getConsentInformation(it) }
+        
+        // Emit initial consent status
+        emitConsentStatus()
+        
         activity?.let {
             consentInformation?.requestConsentInfoUpdate(
                 it,
                 params,
                 {
                     // Consent info updated successfully
-                    if (consentInformation?.isConsentFormAvailable == true) {
-                        loadConsentForm()
-                    }
+                    Log.d(tag, "Consent info updated successfully")
                     emitConsentStatus()
+                    
+                    if (consentInformation?.isConsentFormAvailable == true) {
+                        loadConsentForm(callback)
+                    } else {
+                        val hasConsent = when (consentInformation?.consentStatus) {
+                            ConsentStatus.OBTAINED -> true
+                            ConsentStatus.NOT_REQUIRED -> true
+                            else -> false
+                        }
+                        callback(hasConsent)
+                    }
                 },
                 { error ->
                     // Consent info update failed
                     Log.e(tag, "Error updating consent info: ${error.message}")
+                    emitConsentStatus()
+                    callback(false)
                 }
             )
         }
     }
     
-    private fun loadConsentForm() {
+    private fun loadConsentForm(callback: (Boolean) -> Unit = {}) {
         activity?.let {
             UserMessagingPlatform.loadConsentForm(
                 it,
                 { form ->
                     consentForm = form
                     if (consentInformation?.consentStatus == ConsentStatus.REQUIRED) {
-                        showConsentForm()
+                        showConsentForm(callback)
+                    } else {
+                        val hasConsent = consentInformation?.consentStatus == ConsentStatus.OBTAINED
+                        callback(hasConsent)
                     }
                 },
                 { error ->
                     Log.e(tag, "Error loading consent form: ${error.message}")
+                    callback(false)
                 }
             )
         }
     }
     
-    private fun showConsentForm() {
+    private fun showConsentForm(callback: (Boolean) -> Unit = {}) {
         activity?.let {
             consentForm?.show(
                 it
             ) { error ->
                 if (error != null) {
                     Log.e(tag, "Error showing consent form: ${error.message}")
+                    callback(false)
+                } else {
+                    val hasConsent = consentInformation?.consentStatus == ConsentStatus.OBTAINED
+                    callback(hasConsent)
                 }
                 emitSignal("consent_form_dismissed")
                 emitConsentStatus()

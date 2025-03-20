@@ -65,6 +65,11 @@ func _initialize_admob():
 				config.rewarded_ad_unit_id
 			)
 		%AdStatus.text = "Ad Status: Initialized"
+		
+		# Check consent status and load ads if consent is already obtained
+		var consent_status = admob.get_consent_status()
+		if consent_status == "obtained":
+			_load_all_ads()
 
 
 
@@ -141,6 +146,18 @@ func _on_consent_form_dismissed():
 
 func _on_consent_status_changed(status):
 	%ConsentStatus.text = "Consent Status: " + status
+	
+	# Start loading ads after consent is obtained
+	if status == "obtained":
+		_load_all_ads()
+
+func _load_all_ads():
+	if admob:
+		# Load all ad types
+		admob.load_banner_ad()
+		admob.load_interstitial_ad()
+		admob.load_rewarded_ad()
+		%AdStatus.text = "Ad Status: Loading ads after consent..."
 
 # Signal handlers for banner ads
 func _on_banner_loaded():

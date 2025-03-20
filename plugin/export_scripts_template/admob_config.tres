@@ -16,7 +16,7 @@ rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917"
 ; # rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917"
 
 ; # admob demo app real ids
-; # app_id = "ca-app-pub-8711132323779247~6721197303"
-; # banner_ad_unit_id = "ca-app-pub-8711132323779247/8229720092"
-; # interstitial_ad_unit_id = "ca-app-pub-8711132323779247/2391866212"
-; # rewarded_ad_unit_id = "ca-app-pub-8711132323779247/2352337763"
+;  app_id = "ca-app-pub-8711132323779247~6721197303"
+;  banner_ad_unit_id = "ca-app-pub-8711132323779247/8229720092"
+;  interstitial_ad_unit_id = "ca-app-pub-8711132323779247/2391866212"
+;  rewarded_ad_unit_id = "ca-app-pub-8711132323779247/2352337763"
