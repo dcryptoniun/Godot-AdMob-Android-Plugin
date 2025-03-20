@@ -3,13 +3,8 @@ extends Node2D
 # AdMob reference
 var admob
 
-# Ad configuration
-var app_id = "ca-app-pub-3940256099942544~3347511713" # Test app ID
-var banner_ad_unit_id = "ca-app-pub-3940256099942544/6300978111" # Test banner ad unit ID
-var interstitial_ad_unit_id = "ca-app-pub-3940256099942544/1033173712" # Test interstitial ad unit ID
-var rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917" # Test rewarded ad unit ID
-var is_test_device = true
-var is_real_ads = false
+# AdMob configuration resource
+var config: AdmobConfig
 
 func _ready():
 	# Initialize UI elements
@@ -55,25 +50,32 @@ func _connect_signals():
 # Initialize AdMob with configuration
 func _initialize_admob():
 	if admob:
-		admob.initialize(
-			app_id,
-			banner_ad_unit_id,
-			interstitial_ad_unit_id,
-			rewarded_ad_unit_id,
-			is_test_device,
-			is_real_ads
-		)
+		# Load or create default configuration
+		config = AdmobConfig.load_from_file("res://addons/GodotAdMobAndroidPlugin/admob_config.tres")
+		
+		# Initialize with test ads if no configuration is set
+		if config.app_id.is_empty():
+			admob.initialize_with_test_ads()
+		else:
+			# Initialize with configuration
+			admob.initialize(
+				config.app_id,
+				config.banner_ad_unit_id,
+				config.interstitial_ad_unit_id,
+				config.rewarded_ad_unit_id
+			)
 		%AdStatus.text = "Ad Status: Initialized"
 
 # UI Button handlers
 func _on_initialize_button_pressed():
-	# Get values from UI
-	app_id = %AppIdInput.text
-	banner_ad_unit_id = %BannerAdUnitIdInput.text
-	interstitial_ad_unit_id = %InterstitialAdUnitIdInput.text
-	rewarded_ad_unit_id = %RewardedAdUnitIdInput.text
-	is_test_device = %TestDeviceCheckbox.button_pressed
-	is_real_ads = %RealAdsCheckbox.button_pressed
+	# Update configuration from UI
+	config.app_id = %AppIdInput.text
+	config.banner_ad_unit_id = %BannerAdUnitIdInput.text
+	config.interstitial_ad_unit_id = %InterstitialAdUnitIdInput.text
+	config.rewarded_ad_unit_id = %RewardedAdUnitIdInput.text
+	
+	# Save configuration
+	config.save_to_file("res://addons/GodotAdMobAndroidPlugin/admob_config.tres")
 	
 	# Re-initialize AdMob
 	_initialize_admob()

@@ -19,6 +19,7 @@ func _exit_tree():
 class AndroidExportPlugin extends EditorExportPlugin:
 	
 	var _plugin_name = "GodotAdMobAndroidPlugin"
+	const CONFIG_RESOURCE_PATH = "res://addons/GodotAdMobAndroidPlugin/admob_config.tres"
 
 	func _supports_platform(platform):
 		if platform is EditorExportPlatformAndroid:
@@ -42,3 +43,15 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 	func _get_name():
 		return _plugin_name
+		
+	func _get_android_manifest_xml_features(platform, debug):
+		var app_id = ""
+		
+		# Try to load from config resource file
+		if FileAccess.file_exists(CONFIG_RESOURCE_PATH):
+			var config = load(CONFIG_RESOURCE_PATH) as AdmobConfig
+			if config and config.app_id:
+				app_id = config.app_id
+		
+		# Return the manifest XML feature
+		return '<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="' + app_id + '" />'

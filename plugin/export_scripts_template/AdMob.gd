@@ -47,20 +47,14 @@ signal rewarded_ad_closed
 signal user_earned_reward(amount, type)
 
 # Configuration
-var config = {
-	"app_id": "",
-	"banner_ad_unit_id": "",
-	"interstitial_ad_unit_id": "",
-	"rewarded_ad_unit_id": "",
-	"is_test_device": true,
-	"is_real_ads": false
-}
+var config: Resource
+var config_resource_path: String = "res://addons/GodotAdMobAndroidPlugin/admob_config.tres"
 
-# Test Ad IDs
-const TEST_APP_ID = "ca-app-pub-3940256099942544~3347511713"
-const TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
-const TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
-const TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
+# Configuration properties
+var app_id: String = ""
+var banner_ad_unit_id: String = ""
+var interstitial_ad_unit_id: String = ""
+var rewarded_ad_unit_id: String = ""
 
 func _enter_tree():
 	# Initialize plugin when running in editor
@@ -71,6 +65,14 @@ func _enter_tree():
 	_initialize_plugin()
 
 func _ready():
+	# Load configuration
+	config = load(config_resource_path)
+	if config:
+		app_id = config.app_id
+		banner_ad_unit_id = config.banner_ad_unit_id
+		interstitial_ad_unit_id = config.interstitial_ad_unit_id
+		rewarded_ad_unit_id = config.rewarded_ad_unit_id
+	
 	# Initialize plugin when running on device
 	if not Engine.is_editor_hint():
 		_initialize_plugin()
@@ -145,34 +147,24 @@ func _connect_signals():
 ## @param banner_ad_unit_id The banner ad unit ID
 ## @param interstitial_ad_unit_id The interstitial ad unit ID
 ## @param rewarded_ad_unit_id The rewarded ad unit ID
-## @param is_test_device Whether to use test device
-## @param is_real_ads Whether to use real ads
-func initialize(p_app_id = "", p_banner_ad_unit_id = "", p_interstitial_ad_unit_id = "", 
-				p_rewarded_ad_unit_id = "", p_is_test_device = true, p_is_real_ads = false):
+func initialize(p_app_id: String, p_banner_ad_unit_id: String, p_interstitial_ad_unit_id: String, 
+				p_rewarded_ad_unit_id: String) -> bool:
 	# Update configuration
-	config.app_id = p_app_id
-	config.banner_ad_unit_id = p_banner_ad_unit_id
-	config.interstitial_ad_unit_id = p_interstitial_ad_unit_id
-	config.rewarded_ad_unit_id = p_rewarded_ad_unit_id
-	config.is_test_device = p_is_test_device
-	config.is_real_ads = p_is_real_ads
+	app_id = p_app_id
+	banner_ad_unit_id = p_banner_ad_unit_id
+	interstitial_ad_unit_id = p_interstitial_ad_unit_id
+	rewarded_ad_unit_id = p_rewarded_ad_unit_id
 	
 	# Initialize plugin
 	if _plugin:
 		_plugin.initialize(
-			config.app_id,
-			config.banner_ad_unit_id,
-			config.interstitial_ad_unit_id,
-			config.rewarded_ad_unit_id,
-			config.is_test_device,
-			config.is_real_ads
+			app_id,
+			banner_ad_unit_id,
+			interstitial_ad_unit_id,
+			rewarded_ad_unit_id
 		)
 		return true
 	return false
-
-## Initialize AdMob with test ads
-func initialize_with_test_ads():
-	return initialize(TEST_APP_ID, TEST_BANNER_AD_UNIT_ID, TEST_INTERSTITIAL_AD_UNIT_ID, TEST_REWARDED_AD_UNIT_ID, true, false)
 
 # Consent Management
 

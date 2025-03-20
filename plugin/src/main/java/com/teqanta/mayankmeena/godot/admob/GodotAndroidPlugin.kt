@@ -26,8 +26,6 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     private var rewardedAd: RewardedAd? = null
     private var consentInformation: ConsentInformation? = null
     private var consentForm: ConsentForm? = null
-    private var isTestDevice = false
-    private var isUsingRealAds = false
     private var bannerAdSize = AdSize.BANNER
     private var bannerPosition = 0 // 0: Bottom, 1: Top
     private var bannerVisible = false
@@ -37,12 +35,6 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     private var bannerAdUnitId = ""
     private var interstitialAdUnitId = ""
     private var rewardedAdUnitId = ""
-    
-    // Test Ad IDs
-    private val TEST_APP_ID = "ca-app-pub-3940256099942544~3347511713"
-    private val TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
-    private val TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"
-    private val TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
 
     override fun getPluginName() = "GodotAdMobAndroidPlugin"
 
@@ -67,12 +59,10 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
     // Initialize the plugin with configuration
     @UsedByGodot
     fun initialize(
-        appId: String = "",
-        bannerAdUnitId: String = "",
-        interstitialAdUnitId: String = "",
-        rewardedAdUnitId: String = "",
-        isTestDevice: Boolean = false,
-        isReal: Boolean = false
+        appId: String,
+        bannerAdUnitId: String,
+        interstitialAdUnitId: String,
+        rewardedAdUnitId: String
     ) {
         runOnUiThread {
             try {
@@ -81,19 +71,9 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
                 this.bannerAdUnitId = bannerAdUnitId
                 this.interstitialAdUnitId = interstitialAdUnitId
                 this.rewardedAdUnitId = rewardedAdUnitId
-                this.isTestDevice = isTestDevice
-                this.isUsingRealAds = isReal
                 
                 // Set up Mobile Ads SDK
                 MobileAds.initialize(activity!!) {}
-                
-                // Use test ad IDs if not using real ads
-                if (!isUsingRealAds) {
-                    this.appId = TEST_APP_ID
-                    this.bannerAdUnitId = TEST_BANNER_AD_UNIT_ID
-                    this.interstitialAdUnitId = TEST_INTERSTITIAL_AD_UNIT_ID
-                    this.rewardedAdUnitId = TEST_REWARDED_AD_UNIT_ID
-                }
                 
                 // Request consent information if needed
                 initializeConsentForm()
@@ -112,33 +92,21 @@ class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
         val bannerAdUnitId = config["banner_ad_unit_id"] as? String ?: ""
         val interstitialAdUnitId = config["interstitial_ad_unit_id"] as? String ?: ""
         val rewardedAdUnitId = config["rewarded_ad_unit_id"] as? String ?: ""
-        val isTestDevice = config["is_test_device"] as? Boolean ?: false
-        val isReal = config["is_real"] as? Boolean ?: false
         
-        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId, isTestDevice, isReal)
+        initialize(appId, bannerAdUnitId, interstitialAdUnitId, rewardedAdUnitId)
     }
     
     // Consent Management for EU users
     private fun initializeConsentForm() {
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
-        
-        if (isTestDevice) {
-            params.setConsentDebugSettings(
-                activity?.let {
-                    ConsentDebugSettings.Builder(it)
-                        .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
-                        .addTestDeviceHashedId(AdRequest.DEVICE_ID_EMULATOR)
-                        .build()
-                }
-            )
-        }
+            .build()
         
         consentInformation = activity?.let { UserMessagingPlatform.getConsentInformation(it) }
         activity?.let {
             consentInformation?.requestConsentInfoUpdate(
                 it,
-                params.build(),
+                params,
                 {
                     // Consent info updated successfully
                     if (consentInformation?.isConsentFormAvailable == true) {

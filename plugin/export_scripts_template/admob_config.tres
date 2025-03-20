@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AdmobConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/GodotAdMobAndroidPlugin/AdmobConfig.gd" id="1_yvxm2"]
+
+[resource]
+script = ExtResource("1_yvxm2")
+app_id = "ca-app-pub-3940256099942544~3347511713"
+banner_ad_unit_id = "ca-app-pub-3940256099942544/6300978111"
+interstitial_ad_unit_id = "ca-app-pub-3940256099942544/1033173712"
+rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917"

@@ -14,7 +14,7 @@ config/name="AdMob by Mayank Demo"
 config/tags=PackedStringArray("android", "demo")
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="uid://cs1sdsj77ry5h"
+config/icon="uid://cm3oaogh5du0p"
 
 [debug]
 

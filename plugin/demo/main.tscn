@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cg3hylang5fxn"]
+[gd_scene load_steps=3 format=3 uid="uid://bpdvddifmfbmg"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" uid="uid://cg5ljne64g41y" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
+[ext_resource type="Script" uid="uid://c2omsoyprna4y" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
@@ -123,17 +123,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "ca-app-pub-3940256099942544/5224354917"
 placeholder_text = "Enter Rewarded Ad Unit ID"
-
-[node name="TestDeviceCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-button_pressed = true
-text = "Test Device"
-
-[node name="RealAdsCheckbox" type="CheckBox" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Use Real Ads"
 
 [node name="InitializeButton" type="Button" parent="CanvasLayer/MarginContainer/UI/ScrollContainer/VBoxContainer/InitializationSection"]
 layout_mode = 2
