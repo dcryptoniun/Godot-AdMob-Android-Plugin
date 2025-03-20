@@ -4,6 +4,9 @@ extends Node
 ## AdMob plugin wrapper for Godot
 ## This class provides a clean API for using Google AdMob in Godot projects
 
+# Singleton instance
+static var instance: AdMob = null
+
 # Plugin reference
 const _PLUGIN_NAME = "GodotAdMobAndroidPlugin"
 var _plugin = null
@@ -56,13 +59,15 @@ var banner_ad_unit_id: String = ""
 var interstitial_ad_unit_id: String = ""
 var rewarded_ad_unit_id: String = ""
 
+func _init():
+	# Set singleton instance
+	if instance == null:
+		instance = self
+
 func _enter_tree():
-	# Initialize plugin when running in editor
-	if Engine.is_editor_hint():
-		return
-	
-	# Initialize plugin when running on device
-	_initialize_plugin()
+	# Initialize plugin when not in editor
+	if not Engine.is_editor_hint():
+		_initialize_plugin()
 
 func _ready():
 	# Load configuration
@@ -76,6 +81,10 @@ func _ready():
 	# Initialize plugin when running on device
 	if not Engine.is_editor_hint():
 		_initialize_plugin()
+
+## Get singleton instance
+static func get_instance() -> AdMob:
+	return instance
 
 ## Initialize the plugin and connect signals
 func _initialize_plugin():
@@ -205,12 +214,11 @@ func load_banner_ad(bannerPos = BannerPosition.BOTTOM, size = BannerSize.BANNER)
 				size_str = "FULL_BANNER"
 			BannerSize.LEADERBOARD:
 				size_str = "LEADERBOARD"
-		
 		_plugin.loadBannerAd(bannerPos, size_str)
 		return true
 	return false
 
-## Show the loaded banner ad
+## Show the banner ad
 func show_banner_ad():
 	if _plugin:
 		_plugin.showBannerAd()
@@ -240,17 +248,11 @@ func load_interstitial_ad():
 		return true
 	return false
 
-## Show the loaded interstitial ad
+## Show the interstitial ad
 func show_interstitial_ad():
-	if _plugin and _plugin.isInterstitialAdLoaded():
+	if _plugin:
 		_plugin.showInterstitialAd()
 		return true
-	return false
-
-## Check if an interstitial ad is loaded
-func is_interstitial_ad_loaded():
-	if _plugin:
-		return _plugin.isInterstitialAdLoaded()
 	return false
 
 # Rewarded Ads
@@ -262,36 +264,27 @@ func load_rewarded_ad():
 		return true
 	return false
 
-## Show the loaded rewarded ad
+## Show the rewarded ad
 func show_rewarded_ad():
-	if _plugin and _plugin.isRewardedAdLoaded():
+	if _plugin:
 		_plugin.showRewardedAd()
 		return true
 	return false
 
-## Check if a rewarded ad is loaded
-func is_rewarded_ad_loaded():
-	if _plugin:
-		return _plugin.isRewardedAdLoaded()
-	return false
-
 # Signal handlers
 
-# Consent signals
 func _on_consent_form_dismissed():
 	emit_signal("consent_form_dismissed")
 
 func _on_consent_status_changed(status):
 	emit_signal("consent_status_changed", status)
 
-# Banner ad signals
 func _on_banner_loaded():
 	emit_signal("banner_loaded")
 
 func _on_banner_failed_to_load(error_message):
 	emit_signal("banner_failed_to_load", error_message)
 
-# Interstitial ad signals
 func _on_interstitial_loaded():
 	emit_signal("interstitial_loaded")
 
@@ -304,7 +297,6 @@ func _on_interstitial_opened():
 func _on_interstitial_closed():
 	emit_signal("interstitial_closed")
 
-# Rewarded ad signals
 func _on_rewarded_ad_loaded():
 	emit_signal("rewarded_ad_loaded")
 

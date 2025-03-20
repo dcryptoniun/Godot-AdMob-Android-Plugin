@@ -1,13 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpdvddifmfbmg"]
+[gd_scene load_steps=2 format=3 uid="uid://bpdvddifmfbmg"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Script" uid="uid://gn2v25b66as2" path="res://addons/GodotAdMobAndroidPlugin/AdMob.gd" id="2_aqnxl"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
-
-[node name="AdMob" type="Node" parent="."]
-script = ExtResource("2_aqnxl")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

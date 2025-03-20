@@ -8,12 +8,19 @@ func _enter_tree():
 	# Initialization of the plugin goes here.
 	export_plugin = AndroidExportPlugin.new()
 	add_export_plugin(export_plugin)
+	
+	# Register AdMob as an autoload singleton
+	add_autoload_singleton("AdMob", "res://addons/GodotAdMobAndroidPlugin/AdMob.gd")
 
 
 func _exit_tree():
 	# Clean-up of the plugin goes here.
 	remove_export_plugin(export_plugin)
 	export_plugin = null
+	
+	# Remove the autoload singleton
+	remove_autoload_singleton("AdMob")
+
 
 
 class AndroidExportPlugin extends EditorExportPlugin:

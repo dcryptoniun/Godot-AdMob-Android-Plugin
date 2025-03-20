@@ -1,10 +1,22 @@
-[gd_resource type="Resource" script_class="AdmobConfig" load_steps=2 format=3 uid="uid://btncebmltbtpo"]
+[gd_resource type="Resource" script_class="AdmobConfig" load_steps=2 format=3]
 
-[ext_resource type="Script" uid="uid://bqur6p3s6eavg" path="res://addons/GodotAdMobAndroidPlugin/AdmobConfig.gd" id="1_yvxm2"]
+[ext_resource type="Script" path="res://addons/GodotAdMobAndroidPlugin/AdmobConfig.gd" id="1_yvxm2"]
 
 [resource]
 script = ExtResource("1_yvxm2")
-app_id = "ca-app-pub-8711132323779247~6721197303"
-banner_ad_unit_id = "ca-app-pub-8711132323779247/8229720092"
-interstitial_ad_unit_id = "ca-app-pub-8711132323779247/2391866212"
-rewarded_ad_unit_id = "ca-app-pub-8711132323779247/2352337763"
+ app_id = "ca-app-pub-8711132323779247~6721197303"
+ banner_ad_unit_id = "ca-app-pub-8711132323779247/8229720092"
+ interstitial_ad_unit_id = "ca-app-pub-8711132323779247/2391866212"
+ rewarded_ad_unit_id = "ca-app-pub-8711132323779247/2352337763"
+
+; # Test IDs
+; # app_id = "ca-app-pub-3940256099942544~3347511713"
+; # banner_ad_unit_id = "ca-app-pub-3940256099942544/6300978111"
+; # interstitial_ad_unit_id = "ca-app-pub-3940256099942544/1033173712"
+; # rewarded_ad_unit_id = "ca-app-pub-3940256099942544/5224354917"
+
+; # admob demo app real ids
+;  app_id = "ca-app-pub-8711132323779247~6721197303"
+;  banner_ad_unit_id = "ca-app-pub-8711132323779247/8229720092"
+;  interstitial_ad_unit_id = "ca-app-pub-8711132323779247/2391866212"
+;  rewarded_ad_unit_id = "ca-app-pub-8711132323779247/2352337763"

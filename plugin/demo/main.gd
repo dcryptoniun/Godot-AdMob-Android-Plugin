@@ -1,8 +1,5 @@
 extends Node2D
 
-# AdMob reference
-var admob
-
 # AdMob configuration resource
 var config: AdmobConfig
 
@@ -12,7 +9,7 @@ func _ready():
 	%AdStatus.text = "Ad Status: Not initialized"
 	
 	# Initialize AdMob
-	admob = $AdMob
+	var admob = AdMob.get_instance()
 	if admob:
 		# Connect signals
 		_connect_signals()
@@ -20,11 +17,12 @@ func _ready():
 		# Initialize AdMob
 		_initialize_admob()
 	else:
-		printerr("Couldn't find AdMob node")
-		%AdStatus.text = "Ad Status: AdMob node not found"
+		printerr("Couldn't find AdMob instance")
+		%AdStatus.text = "Ad Status: AdMob instance not found"
 
 # Connect all signals from the AdMob wrapper
 func _connect_signals():
+	var admob = AdMob.get_instance()
 	if admob:
 		# Consent signals
 		admob.connect("consent_form_dismissed", _on_consent_form_dismissed)
@@ -49,6 +47,7 @@ func _connect_signals():
 
 # Initialize AdMob with configuration
 func _initialize_admob():
+	var admob = AdMob.get_instance()
 	if admob:
 		# Load or create default configuration
 		config = AdmobConfig.load_from_file("res://addons/GodotAdMobAndroidPlugin/admob_config.tres")
@@ -71,15 +70,15 @@ func _initialize_admob():
 		if consent_status == "obtained":
 			_load_all_ads()
 
-
-
 # Consent management
 func _on_show_consent_form_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.show_consent_form()
 
 # Banner ads
 func _on_load_banner_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		# Get banner position (0: Bottom, 1: Top)
 		var bannerPos = admob.BannerPosition.BOTTOM
@@ -102,24 +101,29 @@ func _on_load_banner_button_pressed():
 		%AdStatus.text = "Ad Status: Loading banner..."
 
 func _on_show_banner_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.show_banner_ad()
 
 func _on_hide_banner_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.hide_banner_ad()
 
 func _on_remove_banner_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.remove_banner_ad()
 
 # Interstitial ads
 func _on_load_interstitial_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.load_interstitial_ad()
 		%AdStatus.text = "Ad Status: Loading interstitial..."
 
 func _on_show_interstitial_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		if admob.is_interstitial_ad_loaded():
 			admob.show_interstitial_ad()
@@ -128,11 +132,13 @@ func _on_show_interstitial_button_pressed():
 
 # Rewarded ads
 func _on_load_rewarded_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		admob.load_rewarded_ad()
 		%AdStatus.text = "Ad Status: Loading rewarded ad..."
 
 func _on_show_rewarded_button_pressed():
+	var admob = AdMob.get_instance()
 	if admob:
 		if admob.is_rewarded_ad_loaded():
 			admob.show_rewarded_ad()
@@ -143,7 +149,6 @@ func _on_show_rewarded_button_pressed():
 func _on_consent_form_dismissed():
 	%AdStatus.text = "Ad Status: Consent form dismissed"
 
-
 func _on_consent_status_changed(status):
 	%ConsentStatus.text = "Consent Status: " + status
 	
@@ -152,6 +157,7 @@ func _on_consent_status_changed(status):
 		_load_all_ads()
 
 func _load_all_ads():
+	var admob = AdMob.get_instance()
 	if admob:
 		# Load all ad types
 		admob.load_banner_ad()
@@ -165,6 +171,7 @@ func _on_banner_loaded():
 
 func _on_banner_failed_to_load(error_message):
 	%AdStatus.text = "Ad Status: Banner failed to load - " + error_message
+
 
 # Signal handlers for interstitial ads
 func _on_interstitial_loaded():
