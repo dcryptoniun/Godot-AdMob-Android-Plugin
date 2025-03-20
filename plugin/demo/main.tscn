@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bpdvddifmfbmg"]
 
 [ext_resource type="Script" uid="uid://clyhihv3docwy" path="res://main.gd" id="1_j0gfq"]
-[ext_resource type="Texture2D" uid="uid://crccqd88ai70q" path="res://addons/GodotAdMobAndroidPlugin/icon.png" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://ftim2fqolc2k" path="res://addons/GodotAdMobAndroidPlugin/icon.png" id="2_0xm2m"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_j0gfq")
