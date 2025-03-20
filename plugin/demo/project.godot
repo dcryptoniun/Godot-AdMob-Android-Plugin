@@ -23,6 +23,7 @@ AdMob="*res://addons/GodotAdMobAndroidPlugin/AdMob.gd"
 [debug]
 
 settings/stdout/verbose_stdout=true
+gdscript/warnings/static_called_on_instance=0
 
 [display]
 
